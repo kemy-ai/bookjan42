@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import { loadKakaoMapScript } from "@/lib/kakao-map/load-script";
+import { AlertCircle } from "lucide-react";
 import type { Place } from "@/types";
 
 interface KakaoMapProps {
@@ -20,14 +21,17 @@ export default function KakaoMap({
   const markersRef = useRef<kakao.maps.Marker[]>([]);
   const clustererRef = useRef<kakao.maps.MarkerClusterer | null>(null);
   const infoWindowRef = useRef<kakao.maps.InfoWindow | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const initMap = useCallback(async () => {
     if (!mapRef.current) return;
 
     try {
       await loadKakaoMapScript();
-    } catch {
-      console.error("카카오맵 로드 실패");
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "알 수 없는 에러";
+      console.error("카카오맵 로드 실패:", msg);
+      setError(msg);
       return;
     }
 
@@ -54,7 +58,6 @@ export default function KakaoMap({
       map: kakao.maps.Map,
       clusterer: kakao.maps.MarkerClusterer
     ) => {
-      // 기존 마커 제거
       markersRef.current.forEach((m) => m.setMap(null));
       markersRef.current = [];
       clusterer.clear();
@@ -92,7 +95,6 @@ export default function KakaoMap({
       markersRef.current = markers;
       clusterer.addMarkers(markers);
 
-      // 모든 마커가 보이도록 bounds 설정
       if (markers.length > 0) {
         const bounds = new kakao.maps.LatLngBounds();
         placesToMark.forEach((p) => {
@@ -104,19 +106,16 @@ export default function KakaoMap({
     [onPlaceSelect]
   );
 
-  // 초기 로드
   useEffect(() => {
     initMap();
   }, [initMap]);
 
-  // places 변경 시 마커 업데이트
   useEffect(() => {
     if (mapInstanceRef.current && clustererRef.current) {
       updateMarkers(places, mapInstanceRef.current, clustererRef.current);
     }
   }, [places, updateMarkers]);
 
-  // 선택된 장소로 이동
   useEffect(() => {
     if (!selectedPlaceId || !mapInstanceRef.current) return;
     const place = places.find((p) => p.id === selectedPlaceId);
@@ -127,10 +126,29 @@ export default function KakaoMap({
     }
   }, [selectedPlaceId, places]);
 
+  if (error) {
+    return (
+      <div className="flex h-full min-h-[400px] flex-col items-center justify-center gap-3 rounded-lg border border-border bg-card p-8 text-center">
+        <AlertCircle className="h-8 w-8 text-destructive" />
+        <p className="text-sm font-medium text-foreground">지도를 불러올 수 없습니다</p>
+        <p className="text-xs text-muted-foreground">{error}</p>
+        <button
+          onClick={() => {
+            setError(null);
+            initMap();
+          }}
+          className="mt-2 rounded-md bg-primary px-4 py-2 text-xs text-primary-foreground hover:bg-primary/90"
+        >
+          다시 시도
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div
       ref={mapRef}
-      className="h-full min-h-[400px] w-full rounded-lg border border-border"
+      className="h-full min-h-[400px] w-full"
     />
   );
 }

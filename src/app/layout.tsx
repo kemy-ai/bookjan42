@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
 import Header from "@/components/header";
 import "./globals.css";
 
@@ -33,10 +32,6 @@ export default function RootLayout({
           <Header />
           <div className="flex min-h-0 flex-1 flex-col">{children}</div>
         </div>
-        <Script
-          src={`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&autoload=false&libraries=clusterer`}
-          strategy="beforeInteractive"
-        />
       </body>
     </html>
   );
