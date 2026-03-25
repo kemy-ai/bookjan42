@@ -22,7 +22,7 @@ export default function KakaoMap({
   const [error, setError] = useState<string | null>(null);
 
   const initMap = useCallback(async () => {
-    if (!mapRef.current) return;
+    if (!mapRef.current || mapInstanceRef.current) return;
 
     try {
       await loadKakaoMapScript();
@@ -36,7 +36,7 @@ export default function KakaoMap({
     const center = new kakao.maps.LatLng(37.5565, 126.9240);
     const map = new kakao.maps.Map(mapRef.current, {
       center,
-      level: 5,
+      level: 8,
     });
     mapInstanceRef.current = map;
 
@@ -46,9 +46,7 @@ export default function KakaoMap({
       minLevel: 6,
     });
     clustererRef.current = clusterer;
-
-    updateMarkers(places, map, clusterer);
-  }, [places]);
+  }, []);
 
   const updateMarkers = useCallback(
     (
@@ -133,18 +131,24 @@ export default function KakaoMap({
           bounds.extend(new kakao.maps.LatLng(p.lat, p.lng));
         });
         map.setBounds(bounds);
-        // setBounds 후 너무 넓으면 적절한 레벨로 제한 (7 이하 유지)
-        const currentLevel = map.getLevel();
-        if (currentLevel > 7) {
-          map.setLevel(7);
-        }
+        // setBounds 후 적절한 레벨로 제한 (서울 전체가 보이는 8 이하 유지)
+        setTimeout(() => {
+          const currentLevel = map.getLevel();
+          if (currentLevel > 8) {
+            map.setLevel(8);
+          }
+        }, 100);
       }
     },
     [onPlaceSelect]
   );
 
   useEffect(() => {
-    initMap();
+    initMap().then(() => {
+      if (mapInstanceRef.current && clustererRef.current) {
+        updateMarkers(places, mapInstanceRef.current, clustererRef.current);
+      }
+    });
   }, [initMap]);
 
   useEffect(() => {
