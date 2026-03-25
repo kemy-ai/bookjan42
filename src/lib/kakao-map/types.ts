@@ -40,6 +40,18 @@ declare global {
         extend(latlng: LatLng): void;
       }
 
+      class MarkerImage {
+        constructor(src: string, size: Size, options?: { offset?: Point });
+      }
+
+      class Size {
+        constructor(width: number, height: number);
+      }
+
+      class Point {
+        constructor(x: number, y: number);
+      }
+
       class MarkerClusterer {
         constructor(options: MarkerClustererOptions);
         addMarkers(markers: Marker[]): void;
@@ -64,6 +76,7 @@ declare global {
       interface MarkerOptions {
         position: LatLng;
         map?: Map;
+        image?: MarkerImage;
       }
 
       interface InfoWindowOptions {

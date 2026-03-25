@@ -61,9 +61,29 @@ export default function KakaoMap({
       clusterer.clear();
       if (infoWindowRef.current) infoWindowRef.current.close();
 
+      const createMarkerSvg = (color: string) => {
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="40" viewBox="0 0 28 40">
+          <path d="M14 0C6.27 0 0 6.27 0 14c0 10.5 14 26 14 26s14-15.5 14-26C28 6.27 21.73 0 14 0z" fill="${color}" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="14" cy="14" r="6" fill="#fff" opacity="0.9"/>
+        </svg>`;
+        return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+      };
+
+      const talkableImage = new kakao.maps.MarkerImage(
+        createMarkerSvg("#4a90d9"),
+        new kakao.maps.Size(28, 40),
+        { offset: new kakao.maps.Point(14, 40) }
+      );
+      const quietImage = new kakao.maps.MarkerImage(
+        createMarkerSvg("#e67e22"),
+        new kakao.maps.Size(28, 40),
+        { offset: new kakao.maps.Point(14, 40) }
+      );
+
       const markers = placesToMark.map((place) => {
         const position = new kakao.maps.LatLng(place.lat, place.lng);
-        const marker = new kakao.maps.Marker({ position });
+        const markerImage = place.conversation ? talkableImage : quietImage;
+        const marker = new kakao.maps.Marker({ position, image: markerImage });
 
         const descShort = place.description
           ? place.description.slice(0, 40) + (place.description.length > 40 ? "…" : "")
