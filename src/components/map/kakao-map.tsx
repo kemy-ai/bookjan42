@@ -85,7 +85,6 @@ export default function KakaoMap({
           infoWindow.open(map, marker);
           infoWindowRef.current = infoWindow;
 
-          map.panTo(position);
           onPlaceSelect(place);
         });
 
@@ -121,8 +120,11 @@ export default function KakaoMap({
     const place = places.find((p) => p.id === selectedPlaceId);
     if (place) {
       const position = new kakao.maps.LatLng(place.lat, place.lng);
+      const currentLevel = mapInstanceRef.current.getLevel();
       mapInstanceRef.current.panTo(position);
-      mapInstanceRef.current.setLevel(4);
+      if (currentLevel > 6) {
+        mapInstanceRef.current.setLevel(6);
+      }
     }
   }, [selectedPlaceId, places]);
 
