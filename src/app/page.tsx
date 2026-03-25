@@ -1,7 +1,17 @@
-export default function Home() {
-  return (
-    <main className="flex min-h-screen items-center justify-center">
-      <h1 className="text-2xl font-bold">책잔사이</h1>
-    </main>
-  );
+import { createClient } from "@/lib/supabase/server";
+import type { Place } from "@/types";
+import HomeClient from "@/components/home-client";
+
+export default async function Home() {
+  const supabase = await createClient();
+  const { data: places, error } = await supabase
+    .from("places")
+    .select("*")
+    .order("name");
+
+  if (error) {
+    console.error("장소 데이터 로드 실패:", error);
+  }
+
+  return <HomeClient places={(places as Place[]) ?? []} />;
 }
