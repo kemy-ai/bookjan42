@@ -33,10 +33,10 @@ export default function KakaoMap({
       return;
     }
 
-    const center = new kakao.maps.LatLng(37.5536, 126.9253);
+    const center = new kakao.maps.LatLng(37.5565, 126.9240);
     const map = new kakao.maps.Map(mapRef.current, {
       center,
-      level: 8,
+      level: 5,
     });
     mapInstanceRef.current = map;
 
@@ -65,11 +65,22 @@ export default function KakaoMap({
         const position = new kakao.maps.LatLng(place.lat, place.lng);
         const marker = new kakao.maps.Marker({ position });
 
+        const descShort = place.description
+          ? place.description.slice(0, 40) + (place.description.length > 40 ? "…" : "")
+          : "";
+        const hoursText = place.hours || "";
+        const closedText = place.closed_days ? `휴무: ${place.closed_days}` : "";
+
         const infoContent = `
-          <div style="padding:8px 12px;font-size:13px;color:#1a1a1a;white-space:nowrap;font-family:system-ui;">
-            <strong>${place.name}</strong>
-            <br/>
-            <span style="color:#666;font-size:11px;">${place.conversation ? "💬 대화 가능" : "🤫 정숙"} · ${place.price_range}</span>
+          <div style="padding:10px 14px;font-size:13px;color:#1a1a1a;max-width:280px;font-family:system-ui;line-height:1.5;">
+            <strong style="font-size:14px;">${place.name}</strong>
+            <span style="margin-left:6px;font-size:11px;color:#888;">${place.conversation ? "💬 대화 가능" : "🤫 정숙"}</span>
+            ${descShort ? `<div style="color:#555;font-size:11px;margin-top:4px;">${descShort}</div>` : ""}
+            ${hoursText ? `<div style="color:#666;font-size:11px;margin-top:3px;">🕐 ${hoursText}</div>` : ""}
+            ${closedText ? `<div style="color:#c44;font-size:11px;">${closedText}</div>` : ""}
+            <div style="margin-top:5px;">
+              <a href="/place/${place.id}" style="color:#4a7fd7;font-size:11px;text-decoration:none;">상세보기 →</a>
+            </div>
           </div>
         `;
 
@@ -93,8 +104,12 @@ export default function KakaoMap({
       clusterer.addMarkers(markers);
 
       if (markers.length > 0) {
+        const seoulPlaces = placesToMark.filter(
+          (p) => p.lat > 37.4 && p.lat < 37.7 && p.lng > 126.8 && p.lng < 127.2
+        );
+        const targetPlaces = seoulPlaces.length > 0 ? seoulPlaces : placesToMark;
         const bounds = new kakao.maps.LatLngBounds();
-        placesToMark.forEach((p) => {
+        targetPlaces.forEach((p) => {
           bounds.extend(new kakao.maps.LatLng(p.lat, p.lng));
         });
         map.setBounds(bounds);
