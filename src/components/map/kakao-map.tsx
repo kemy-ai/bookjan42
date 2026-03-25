@@ -130,7 +130,7 @@ export default function KakaoMap({
   return (
     <div
       ref={mapRef}
-      className="h-full w-full rounded-lg border border-border"
+      className="h-full min-h-[400px] w-full rounded-lg border border-border"
     />
   );
 }
