@@ -104,7 +104,6 @@ export default function HomeClient({ places }: HomeClientProps) {
           <KakaoMap
             places={filteredPlaces}
             onPlaceSelect={handlePlaceSelect}
-            selectedPlaceId={selectedPlaceId}
           />
         </div>
 

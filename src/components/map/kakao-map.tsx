@@ -8,13 +8,11 @@ import type { Place } from "@/types";
 interface KakaoMapProps {
   places: Place[];
   onPlaceSelect: (place: Place) => void;
-  selectedPlaceId?: string | null;
 }
 
 export default function KakaoMap({
   places,
   onPlaceSelect,
-  selectedPlaceId,
 }: KakaoMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<kakao.maps.Map | null>(null);
@@ -114,19 +112,6 @@ export default function KakaoMap({
       updateMarkers(places, mapInstanceRef.current, clustererRef.current);
     }
   }, [places, updateMarkers]);
-
-  useEffect(() => {
-    if (!selectedPlaceId || !mapInstanceRef.current) return;
-    const place = places.find((p) => p.id === selectedPlaceId);
-    if (place) {
-      const position = new kakao.maps.LatLng(place.lat, place.lng);
-      const currentLevel = mapInstanceRef.current.getLevel();
-      mapInstanceRef.current.panTo(position);
-      if (currentLevel > 6) {
-        mapInstanceRef.current.setLevel(6);
-      }
-    }
-  }, [selectedPlaceId, places]);
 
   if (error) {
     return (
