@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { loadKakaoMapScript } from "@/lib/kakao-map/load-script";
 import { AlertCircle } from "lucide-react";
 import type { Place } from "@/types";
@@ -9,6 +9,10 @@ interface KakaoMapProps {
   places: Place[];
   onPlaceSelect: (place: Place) => void;
 }
+
+// 마포구 중심 (홍대입구역 근처)
+const MAPO_CENTER = { lat: 37.5565, lng: 126.9240 };
+const DEFAULT_LEVEL = 5;
 
 export default function KakaoMap({
   places,
@@ -20,142 +24,122 @@ export default function KakaoMap({
   const clustererRef = useRef<kakao.maps.MarkerClusterer | null>(null);
   const infoWindowRef = useRef<kakao.maps.InfoWindow | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [mapReady, setMapReady] = useState(false);
 
-  const initMap = useCallback(async () => {
-    if (!mapRef.current || mapInstanceRef.current) return;
+  // 1단계: 맵 초기화 (한 번만)
+  useEffect(() => {
+    if (!mapRef.current) return;
 
-    try {
-      await loadKakaoMapScript();
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "알 수 없는 에러";
-      console.error("카카오맵 로드 실패:", msg);
-      setError(msg);
-      return;
-    }
+    let cancelled = false;
 
-    const center = new kakao.maps.LatLng(37.5565, 126.9240);
-    const map = new kakao.maps.Map(mapRef.current, {
-      center,
-      level: 8,
-    });
-    mapInstanceRef.current = map;
+    (async () => {
+      try {
+        await loadKakaoMapScript();
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : "알 수 없는 에러";
+        console.error("카카오맵 로드 실패:", msg);
+        if (!cancelled) setError(msg);
+        return;
+      }
 
-    const clusterer = new kakao.maps.MarkerClusterer({
-      map,
-      averageCenter: true,
-      minLevel: 6,
-    });
-    clustererRef.current = clusterer;
-  }, []);
+      if (cancelled || !mapRef.current) return;
 
-  const updateMarkers = useCallback(
-    (
-      placesToMark: Place[],
-      map: kakao.maps.Map,
-      clusterer: kakao.maps.MarkerClusterer
-    ) => {
-      markersRef.current.forEach((m) => m.setMap(null));
-      markersRef.current = [];
-      clusterer.clear();
-      if (infoWindowRef.current) infoWindowRef.current.close();
-
-      const createMarkerSvg = (color: string) => {
-        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="40" viewBox="0 0 28 40">
-          <path d="M14 0C6.27 0 0 6.27 0 14c0 10.5 14 26 14 26s14-15.5 14-26C28 6.27 21.73 0 14 0z" fill="${color}" stroke="#fff" stroke-width="1.5"/>
-          <circle cx="14" cy="14" r="6" fill="#fff" opacity="0.9"/>
-        </svg>`;
-        return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-      };
-
-      const talkableImage = new kakao.maps.MarkerImage(
-        createMarkerSvg("#4a90d9"),
-        new kakao.maps.Size(28, 40),
-        { offset: new kakao.maps.Point(14, 40) }
-      );
-      const quietImage = new kakao.maps.MarkerImage(
-        createMarkerSvg("#e67e22"),
-        new kakao.maps.Size(28, 40),
-        { offset: new kakao.maps.Point(14, 40) }
-      );
-
-      const markers = placesToMark.map((place) => {
-        const position = new kakao.maps.LatLng(place.lat, place.lng);
-        const markerImage = place.conversation ? talkableImage : quietImage;
-        const marker = new kakao.maps.Marker({ position, image: markerImage });
-
-        const descShort = place.description
-          ? place.description.slice(0, 40) + (place.description.length > 40 ? "…" : "")
-          : "";
-        const hoursText = place.hours || "";
-        const closedText = place.closed_days ? `휴무: ${place.closed_days}` : "";
-
-        const infoContent = `
-          <div style="padding:10px 14px;font-size:13px;color:#1a1a1a;max-width:280px;font-family:system-ui;line-height:1.5;">
-            <strong style="font-size:14px;">${place.name}</strong>
-            <span style="margin-left:6px;font-size:11px;color:#888;">${place.conversation ? "💬 대화 가능" : "🤫 정숙"}</span>
-            ${descShort ? `<div style="color:#555;font-size:11px;margin-top:4px;">${descShort}</div>` : ""}
-            ${hoursText ? `<div style="color:#666;font-size:11px;margin-top:3px;">🕐 ${hoursText}</div>` : ""}
-            ${closedText ? `<div style="color:#c44;font-size:11px;">${closedText}</div>` : ""}
-            <div style="margin-top:5px;">
-              <a href="/place/${place.id}" style="color:#4a7fd7;font-size:11px;text-decoration:none;">상세보기 →</a>
-            </div>
-          </div>
-        `;
-
-        kakao.maps.event.addListener(marker, "click", () => {
-          if (infoWindowRef.current) infoWindowRef.current.close();
-
-          const infoWindow = new kakao.maps.InfoWindow({
-            content: infoContent,
-            removable: true,
-          });
-          infoWindow.open(map, marker);
-          infoWindowRef.current = infoWindow;
-
-          onPlaceSelect(place);
-        });
-
-        return marker;
+      const map = new kakao.maps.Map(mapRef.current, {
+        center: new kakao.maps.LatLng(MAPO_CENTER.lat, MAPO_CENTER.lng),
+        level: DEFAULT_LEVEL,
       });
 
-      markersRef.current = markers;
-      clusterer.addMarkers(markers);
+      const clusterer = new kakao.maps.MarkerClusterer({
+        map,
+        averageCenter: true,
+        minLevel: 6,
+      });
 
-      if (markers.length > 0) {
-        const seoulPlaces = placesToMark.filter(
-          (p) => p.lat > 37.4 && p.lat < 37.7 && p.lng > 126.8 && p.lng < 127.2
-        );
-        const targetPlaces = seoulPlaces.length > 0 ? seoulPlaces : placesToMark;
+      mapInstanceRef.current = map;
+      clustererRef.current = clusterer;
+      setMapReady(true);
+    })();
 
-        // setBounds 대신 직접 중심점 + 줌 레벨 계산 (setBounds 버그 우회)
-        let avgLat = 0, avgLng = 0;
-        targetPlaces.forEach((p) => {
-          avgLat += p.lat;
-          avgLng += p.lng;
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // 2단계: 마커 업데이트 (places 또는 맵 준비 시)
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    const clusterer = clustererRef.current;
+    if (!map || !clusterer || !mapReady) return;
+
+    // 기존 마커 제거
+    markersRef.current.forEach((m) => m.setMap(null));
+    markersRef.current = [];
+    clusterer.clear();
+    if (infoWindowRef.current) infoWindowRef.current.close();
+
+    // SVG 마커 생성 함수
+    const createMarkerSvg = (color: string) => {
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="40" viewBox="0 0 28 40">
+        <path d="M14 0C6.27 0 0 6.27 0 14c0 10.5 14 26 14 26s14-15.5 14-26C28 6.27 21.73 0 14 0z" fill="${color}" stroke="#fff" stroke-width="1.5"/>
+        <circle cx="14" cy="14" r="6" fill="#fff" opacity="0.9"/>
+      </svg>`;
+      return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+    };
+
+    const talkableImage = new kakao.maps.MarkerImage(
+      createMarkerSvg("#4a90d9"),
+      new kakao.maps.Size(28, 40),
+      { offset: new kakao.maps.Point(14, 40) }
+    );
+    const quietImage = new kakao.maps.MarkerImage(
+      createMarkerSvg("#e67e22"),
+      new kakao.maps.Size(28, 40),
+      { offset: new kakao.maps.Point(14, 40) }
+    );
+
+    const markers = places.map((place) => {
+      const position = new kakao.maps.LatLng(place.lat, place.lng);
+      const markerImage = place.conversation ? talkableImage : quietImage;
+      const marker = new kakao.maps.Marker({ position, image: markerImage });
+
+      const descShort = place.description
+        ? place.description.slice(0, 40) + (place.description.length > 40 ? "…" : "")
+        : "";
+      const hoursText = place.hours || "";
+      const closedText = place.closed_days ? `휴무: ${place.closed_days}` : "";
+
+      const infoContent = `
+        <div style="padding:10px 14px;font-size:13px;color:#1a1a1a;max-width:280px;font-family:system-ui;line-height:1.5;">
+          <strong style="font-size:14px;">${place.name}</strong>
+          <span style="margin-left:6px;font-size:11px;color:#888;">${place.conversation ? "💬 대화 가능" : "🤫 정숙"}</span>
+          ${descShort ? `<div style="color:#555;font-size:11px;margin-top:4px;">${descShort}</div>` : ""}
+          ${hoursText ? `<div style="color:#666;font-size:11px;margin-top:3px;">🕐 ${hoursText}</div>` : ""}
+          ${closedText ? `<div style="color:#c44;font-size:11px;">${closedText}</div>` : ""}
+          <div style="margin-top:5px;">
+            <a href="/place/${place.id}" style="color:#4a7fd7;font-size:11px;text-decoration:none;">상세보기 →</a>
+          </div>
+        </div>
+      `;
+
+      kakao.maps.event.addListener(marker, "click", () => {
+        if (infoWindowRef.current) infoWindowRef.current.close();
+
+        const infoWindow = new kakao.maps.InfoWindow({
+          content: infoContent,
+          removable: true,
         });
-        avgLat /= targetPlaces.length;
-        avgLng /= targetPlaces.length;
+        infoWindow.open(map, marker);
+        infoWindowRef.current = infoWindow;
 
-        map.setCenter(new kakao.maps.LatLng(avgLat, avgLng));
-        map.setLevel(8);
-      }
-    },
-    [onPlaceSelect]
-  );
+        onPlaceSelect(place);
+      });
 
-  useEffect(() => {
-    initMap().then(() => {
-      if (mapInstanceRef.current && clustererRef.current) {
-        updateMarkers(places, mapInstanceRef.current, clustererRef.current);
-      }
+      return marker;
     });
-  }, [initMap]);
 
-  useEffect(() => {
-    if (mapInstanceRef.current && clustererRef.current) {
-      updateMarkers(places, mapInstanceRef.current, clustererRef.current);
-    }
-  }, [places, updateMarkers]);
+    markersRef.current = markers;
+    clusterer.addMarkers(markers);
+  }, [places, mapReady, onPlaceSelect]);
 
   if (error) {
     return (
@@ -166,7 +150,9 @@ export default function KakaoMap({
         <button
           onClick={() => {
             setError(null);
-            initMap();
+            setMapReady(false);
+            mapInstanceRef.current = null;
+            clustererRef.current = null;
           }}
           className="mt-2 rounded-md bg-primary px-4 py-2 text-xs text-primary-foreground hover:bg-primary/90"
         >
