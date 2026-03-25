@@ -1,26 +1,51 @@
 @import "tailwindcss";
 
+/* ========== Light Mode (default) ========== */
 :root {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.178 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.178 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.75 0.15 45);
-  --primary-foreground: oklch(0.15 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.75 0.15 45);
-  --radius: 0.625rem;
+  --background: #FFFBF5;
+  --foreground: #1C1410;
+  --card: #FFFFFF;
+  --card-foreground: #1C1410;
+  --popover: #FFFFFF;
+  --popover-foreground: #1C1410;
+  --primary: #B45309;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F5F0EB;
+  --secondary-foreground: #44403C;
+  --muted: #F5F0EB;
+  --muted-foreground: #78716C;
+  --accent: #D97706;
+  --accent-foreground: #FFFFFF;
+  --destructive: #DC2626;
+  --destructive-foreground: #FFFFFF;
+  --border: #E7E0D8;
+  --input: #E7E0D8;
+  --ring: #D97706;
+  --radius: 1rem;
+}
+
+/* ========== Dark Mode ========== */
+.dark {
+  --background: #0C0A09;
+  --foreground: #FAFAF9;
+  --card: #1C1917;
+  --card-foreground: #FAFAF9;
+  --popover: #1C1917;
+  --popover-foreground: #FAFAF9;
+  --primary: #D97706;
+  --primary-foreground: #0C0A09;
+  --secondary: #292524;
+  --secondary-foreground: #E7E5E4;
+  --muted: #292524;
+  --muted-foreground: #A8A29E;
+  --accent: #F59E0B;
+  --accent-foreground: #0C0A09;
+  --destructive: #EF4444;
+  --destructive-foreground: #FAFAF9;
+  --border: #33302E;
+  --input: #33302E;
+  --ring: #D97706;
+  --radius: 1rem;
 }
 
 @theme inline {
@@ -53,4 +78,5 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans, system-ui, sans-serif);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }

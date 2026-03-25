@@ -65,13 +65,13 @@ export default function SearchFilter({ onFilterChange }: SearchFilterProps) {
               setKeyword(e.target.value);
               applyFilter({ keyword: e.target.value });
             }}
-            className="h-10 w-full rounded-lg border border-input bg-card pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            className="h-10 w-full rounded-xl border border-input bg-card pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary"
           />
         </div>
         <button
           type="button"
           onClick={() => setShowFilters(!showFilters)}
-          className={`flex h-10 items-center gap-1.5 rounded-lg border px-3 text-sm transition-colors ${
+          className={`flex h-10 items-center gap-1.5 cursor-pointer rounded-xl border px-3 text-sm transition-all duration-200 ${
             hasActiveFilters
               ? "border-primary bg-primary/10 text-primary"
               : "border-input bg-card text-foreground hover:bg-accent"
@@ -84,7 +84,7 @@ export default function SearchFilter({ onFilterChange }: SearchFilterProps) {
 
       {/* 필터 패널 */}
       {showFilters && (
-        <div className="space-y-3 rounded-lg border border-border bg-card p-4">
+        <div className="space-y-4 rounded-2xl border border-border bg-card p-5 shadow-sm">
           {/* 대화 가능 여부 */}
           <div>
             <p className="mb-2 text-xs font-medium text-muted-foreground">
@@ -102,7 +102,7 @@ export default function SearchFilter({ onFilterChange }: SearchFilterProps) {
                     setConversation(opt.value);
                     applyFilter({ conversation: opt.value });
                   }}
-                  className={`rounded-md px-3 py-1.5 text-xs transition-colors ${
+                  className={`cursor-pointer rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
                     conversation === opt.value
                       ? "bg-primary text-primary-foreground"
                       : "bg-secondary text-secondary-foreground hover:bg-accent"
@@ -132,7 +132,7 @@ export default function SearchFilter({ onFilterChange }: SearchFilterProps) {
                     setPriceRange(opt.value);
                     applyFilter({ price_range: opt.value });
                   }}
-                  className={`rounded-md px-3 py-1.5 text-xs transition-colors ${
+                  className={`cursor-pointer rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
                     priceRange === opt.value
                       ? "bg-primary text-primary-foreground"
                       : "bg-secondary text-secondary-foreground hover:bg-accent"
@@ -158,7 +158,7 @@ export default function SearchFilter({ onFilterChange }: SearchFilterProps) {
                     setAtmosphere(next);
                     applyFilter({ atmosphere: next });
                   }}
-                  className={`rounded-md px-3 py-1.5 text-xs transition-colors ${
+                  className={`cursor-pointer rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
                     atmosphere === atm
                       ? "bg-primary text-primary-foreground"
                       : "bg-secondary text-secondary-foreground hover:bg-accent"

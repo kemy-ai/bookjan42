@@ -65,13 +65,13 @@ export default function HomeClient({ places }: HomeClientProps) {
               <SearchFilter onFilterChange={setFilter} />
             </div>
             {/* 모바일: 지도/목록 토글 */}
-            <div className="flex gap-1 md:hidden">
+            <div className="flex gap-1 rounded-xl border border-border bg-secondary p-1 md:hidden">
               <button
                 onClick={() => setView("map")}
-                className={`rounded-md p-2 ${
+                className={`cursor-pointer rounded-lg p-2 transition-all duration-200 ${
                   view === "map"
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-accent"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
                 aria-label="지도 보기"
               >
@@ -79,10 +79,10 @@ export default function HomeClient({ places }: HomeClientProps) {
               </button>
               <button
                 onClick={() => setView("list")}
-                className={`rounded-md p-2 ${
+                className={`cursor-pointer rounded-lg p-2 transition-all duration-200 ${
                   view === "list"
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-accent"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
                 aria-label="목록 보기"
               >
