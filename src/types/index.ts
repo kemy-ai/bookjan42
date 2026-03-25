@@ -13,6 +13,9 @@ export interface Place {
   photos: string[];
   description: string | null;
   website: string | null;
+  closed_days: string | null;
+  instagram_url: string | null;
+  naver_place_url: string | null;
   created_at: string;
   updated_at: string;
 }

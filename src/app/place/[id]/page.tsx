@@ -9,6 +9,8 @@ import {
   ExternalLink,
   MessageCircle,
   VolumeOff,
+  Instagram,
+  CalendarOff,
 } from "lucide-react";
 import type { Place, MenuItem } from "@/types";
 
@@ -29,26 +31,35 @@ export default async function PlaceDetail({ params }: PageProps) {
     notFound();
   }
 
-  const place = data as Place;
+  const place = data as Place & {
+    closed_days?: string | null;
+    instagram_url?: string | null;
+    naver_place_url?: string | null;
+  };
 
   return (
-    <div className="min-h-dvh bg-background">
-      {/* 상단 바 */}
-      <header className="sticky top-0 z-10 border-b border-border bg-background/80 px-4 py-3 backdrop-blur-sm">
+    <div className="flex-1 overflow-y-auto bg-background">
+      {/* 뒤로가기 바 */}
+      <div className="border-b border-border bg-background px-4 py-2">
         <div className="mx-auto flex max-w-2xl items-center gap-3">
           <Link
             href="/"
-            className="rounded-md p-1.5 text-muted-foreground hover:bg-accent hover:text-foreground"
+            className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-sm text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-4 w-4" />
+            목록으로
           </Link>
-          <h1 className="truncate text-lg font-bold">{place.name}</h1>
         </div>
-      </header>
+      </div>
 
       <main className="mx-auto max-w-2xl px-4 py-6">
+        {/* 장소명 */}
+        <h2 className="mb-3 text-2xl font-bold text-foreground">
+          {place.name}
+        </h2>
+
         {/* 대화 가능 여부 + 가격대 */}
-        <div className="mb-4 flex gap-2">
+        <div className="mb-4 flex flex-wrap gap-2">
           <span
             className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-sm ${
               place.conversation
@@ -94,7 +105,16 @@ export default async function PlaceDetail({ params }: PageProps) {
           {place.hours && (
             <div className="flex items-start gap-3">
               <Clock className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-              <span className="text-sm">{place.hours}</span>
+              <span className="text-sm whitespace-pre-line">{place.hours}</span>
+            </div>
+          )}
+
+          {place.closed_days && (
+            <div className="flex items-start gap-3">
+              <CalendarOff className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+              <span className="text-sm text-amber-400">
+                휴무: {place.closed_days}
+              </span>
             </div>
           )}
 
@@ -110,7 +130,35 @@ export default async function PlaceDetail({ params }: PageProps) {
             </div>
           )}
 
-          {place.website && (
+          {place.instagram_url && (
+            <div className="flex items-start gap-3">
+              <Instagram className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+              <a
+                href={place.instagram_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-primary hover:underline"
+              >
+                인스타그램
+              </a>
+            </div>
+          )}
+
+          {place.naver_place_url && (
+            <div className="flex items-start gap-3">
+              <ExternalLink className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+              <a
+                href={place.naver_place_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-primary hover:underline"
+              >
+                네이버 플레이스
+              </a>
+            </div>
+          )}
+
+          {place.website && !place.instagram_url && (
             <div className="flex items-start gap-3">
               <ExternalLink className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
               <a
@@ -119,7 +167,7 @@ export default async function PlaceDetail({ params }: PageProps) {
                 rel="noopener noreferrer"
                 className="text-sm text-primary hover:underline"
               >
-                인스타그램/웹사이트
+                웹사이트
               </a>
             </div>
           )}
@@ -128,9 +176,9 @@ export default async function PlaceDetail({ params }: PageProps) {
         {/* 분위기 태그 */}
         {place.atmosphere.length > 0 && (
           <div className="mb-6">
-            <h2 className="mb-2 text-sm font-semibold text-foreground">
+            <h3 className="mb-2 text-sm font-semibold text-foreground">
               분위기
-            </h2>
+            </h3>
             <div className="flex flex-wrap gap-2">
               {place.atmosphere.map((tag) => (
                 <span
@@ -147,9 +195,9 @@ export default async function PlaceDetail({ params }: PageProps) {
         {/* 메뉴 */}
         {place.menus && place.menus.length > 0 && (
           <div className="mb-6">
-            <h2 className="mb-2 text-sm font-semibold text-foreground">
+            <h3 className="mb-2 text-sm font-semibold text-foreground">
               대표 메뉴
-            </h2>
+            </h3>
             <div className="space-y-2 rounded-lg border border-border bg-card p-4">
               {place.menus.map((menu: MenuItem, i: number) => (
                 <div

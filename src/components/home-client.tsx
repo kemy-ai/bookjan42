@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback } from "react";
 import dynamic from "next/dynamic";
-import { BookOpen, Map as MapIcon, List } from "lucide-react";
+import { Map as MapIcon, List } from "lucide-react";
 import SearchFilter from "@/components/place/search-filter";
 import PlaceList from "@/components/place/place-list";
 import type { Place, PlaceFilter } from "@/types";
@@ -27,7 +27,6 @@ export default function HomeClient({ places }: HomeClientProps) {
 
   const filteredPlaces = useMemo(() => {
     return places.filter((place) => {
-      // 키워드 필터
       if (filter.keyword) {
         const kw = filter.keyword.toLowerCase();
         const matchName = place.name.toLowerCase().includes(kw);
@@ -36,17 +35,14 @@ export default function HomeClient({ places }: HomeClientProps) {
         if (!matchName && !matchAddress && !matchDesc) return false;
       }
 
-      // 대화 가능 여부
       if (filter.conversation !== null && filter.conversation !== undefined) {
         if (place.conversation !== filter.conversation) return false;
       }
 
-      // 가격대
       if (filter.price_range) {
         if (place.price_range !== filter.price_range) return false;
       }
 
-      // 분위기
       if (filter.atmosphere) {
         if (!place.atmosphere.includes(filter.atmosphere)) return false;
       }
@@ -60,19 +56,14 @@ export default function HomeClient({ places }: HomeClientProps) {
   }, []);
 
   return (
-    <div className="flex h-dvh flex-col">
-      {/* 헤더 */}
-      <header className="shrink-0 border-b border-border bg-background px-4 py-3">
+    <div className="flex flex-1 flex-col">
+      {/* 검색 + 모바일 토글 */}
+      <div className="shrink-0 border-b border-border bg-background px-4 py-3">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-3 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-primary" />
-              <h1 className="text-lg font-bold text-foreground">책잔사이</h1>
-              <span className="text-xs text-muted-foreground">
-                술 마시는 책방 지도
-              </span>
+          <div className="flex items-center gap-2">
+            <div className="flex-1">
+              <SearchFilter onFilterChange={setFilter} />
             </div>
-
             {/* 모바일: 지도/목록 토글 */}
             <div className="flex gap-1 md:hidden">
               <button
@@ -99,13 +90,11 @@ export default function HomeClient({ places }: HomeClientProps) {
               </button>
             </div>
           </div>
-
-          <SearchFilter onFilterChange={setFilter} />
         </div>
-      </header>
+      </div>
 
       {/* 메인 콘텐츠 */}
-      <main className="flex min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1">
         {/* 지도 */}
         <div
           className={`flex-1 ${
@@ -130,7 +119,7 @@ export default function HomeClient({ places }: HomeClientProps) {
             selectedPlaceId={selectedPlaceId}
           />
         </div>
-      </main>
+      </div>
     </div>
   );
 }

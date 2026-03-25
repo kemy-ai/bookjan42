@@ -1,44 +1,46 @@
 import "@/lib/kakao-map/types";
 
 let isLoaded = false;
-let isLoading = false;
 let loadPromise: Promise<void> | null = null;
 
 /**
- * 카카오맵 SDK를 동적으로 로드
- * 중복 로드 방지 + Promise 기반
+ * 카카오맵 SDK 로드 대기
+ * layout.tsx의 next/script로 SDK가 로드되므로, kakao.maps.load()만 호출
  */
 export function loadKakaoMapScript(): Promise<void> {
   if (isLoaded && window.kakao?.maps) {
     return Promise.resolve();
   }
 
-  if (isLoading && loadPromise) {
+  if (loadPromise) {
     return loadPromise;
   }
 
-  isLoading = true;
-
   loadPromise = new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&autoload=false&libraries=clusterer`;
-    script.async = true;
+    const maxAttempts = 50; // 최대 5초 대기
+    let attempts = 0;
 
-    script.onload = () => {
-      window.kakao.maps.load(() => {
-        isLoaded = true;
-        isLoading = false;
-        resolve();
-      });
+    const checkKakao = () => {
+      attempts++;
+
+      if (window.kakao?.maps) {
+        window.kakao.maps.load(() => {
+          isLoaded = true;
+          resolve();
+        });
+        return;
+      }
+
+      if (attempts >= maxAttempts) {
+        loadPromise = null;
+        reject(new Error("카카오맵 SDK 로드 시간 초과"));
+        return;
+      }
+
+      setTimeout(checkKakao, 100);
     };
 
-    script.onerror = () => {
-      isLoading = false;
-      loadPromise = null;
-      reject(new Error("카카오맵 SDK 로드 실패"));
-    };
-
-    document.head.appendChild(script);
+    checkKakao();
   });
 
   return loadPromise;
