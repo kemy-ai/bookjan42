@@ -133,6 +133,11 @@ export default function KakaoMap({
           bounds.extend(new kakao.maps.LatLng(p.lat, p.lng));
         });
         map.setBounds(bounds);
+        // setBounds 후 너무 넓으면 적절한 레벨로 제한 (7 이하 유지)
+        const currentLevel = map.getLevel();
+        if (currentLevel > 7) {
+          map.setLevel(7);
+        }
       }
     },
     [onPlaceSelect]
