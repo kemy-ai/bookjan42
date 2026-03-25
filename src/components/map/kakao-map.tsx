@@ -126,18 +126,18 @@ export default function KakaoMap({
           (p) => p.lat > 37.4 && p.lat < 37.7 && p.lng > 126.8 && p.lng < 127.2
         );
         const targetPlaces = seoulPlaces.length > 0 ? seoulPlaces : placesToMark;
-        const bounds = new kakao.maps.LatLngBounds();
+
+        // setBounds 대신 직접 중심점 + 줌 레벨 계산 (setBounds 버그 우회)
+        let avgLat = 0, avgLng = 0;
         targetPlaces.forEach((p) => {
-          bounds.extend(new kakao.maps.LatLng(p.lat, p.lng));
+          avgLat += p.lat;
+          avgLng += p.lng;
         });
-        map.setBounds(bounds);
-        // setBounds 후 적절한 레벨로 제한 (서울 전체가 보이는 8 이하 유지)
-        setTimeout(() => {
-          const currentLevel = map.getLevel();
-          if (currentLevel > 8) {
-            map.setLevel(8);
-          }
-        }, 100);
+        avgLat /= targetPlaces.length;
+        avgLng /= targetPlaces.length;
+
+        map.setCenter(new kakao.maps.LatLng(avgLat, avgLng));
+        map.setLevel(8);
       }
     },
     [onPlaceSelect]
