@@ -80,3 +80,12 @@ body {
   font-family: var(--font-geist-sans, system-ui, sans-serif);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* 필터 칩 가로 스크롤바 숨김 */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

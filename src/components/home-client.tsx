@@ -57,15 +57,15 @@ export default function HomeClient({ places }: HomeClientProps) {
 
   return (
     <div className="flex flex-1 flex-col">
-      {/* 검색 + 모바일 토글 */}
+      {/* 검색 + 필터 + 모바일 토글 */}
       <div className="shrink-0 border-b border-border bg-background px-4 py-3">
         <div className="mx-auto max-w-7xl">
-          <div className="flex items-center gap-2">
-            <div className="flex-1">
+          <div className="flex items-start gap-2">
+            <div className="min-w-0 flex-1">
               <SearchFilter onFilterChange={setFilter} />
             </div>
             {/* 모바일: 지도/목록 토글 */}
-            <div className="flex gap-1 rounded-xl border border-border bg-secondary p-1 md:hidden">
+            <div className="flex shrink-0 gap-1 rounded-xl border border-border bg-secondary p-1 md:hidden">
               <button
                 onClick={() => setView("map")}
                 className={`cursor-pointer rounded-lg p-2 transition-all duration-200 ${
