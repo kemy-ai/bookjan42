@@ -298,18 +298,17 @@ export default async function PlaceDetail({ params }: PageProps) {
               블로그 리뷰 ({reviews.length})
             </h2>
 
-            {/* 장단점 요약 */}
+            {/* 장단점 요약 (언급 횟수 표시) */}
             {(() => {
               const allPros = reviews.flatMap((r) => r.pros).filter(Boolean);
               const allCons = reviews.flatMap((r) => r.cons).filter(Boolean);
-              // 빈도순 정렬 (중복 제거하면서 많이 나온 순)
               const countMap = (arr: string[]) => {
                 const map = new Map<string, number>();
                 arr.forEach((s) => map.set(s, (map.get(s) || 0) + 1));
-                return [...map.entries()].sort((a, b) => b[1] - a[1]).map(([s]) => s);
+                return [...map.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
               };
-              const topPros = countMap(allPros).slice(0, 5);
-              const topCons = countMap(allCons).slice(0, 5);
+              const topPros = countMap(allPros);
+              const topCons = countMap(allCons);
 
               if (topPros.length === 0 && topCons.length === 0) return null;
 
@@ -321,10 +320,15 @@ export default async function PlaceDetail({ params }: PageProps) {
                         <ThumbsUp className="h-3.5 w-3.5" />
                         장점
                       </p>
-                      <ul className="space-y-1">
-                        {topPros.map((pro) => (
-                          <li key={pro} className="text-sm text-green-800/80 dark:text-green-300/80">
-                            {pro}
+                      <ul className="space-y-1.5">
+                        {topPros.map(([text, count]) => (
+                          <li key={text} className="flex items-start gap-1.5 text-sm text-green-800/80 dark:text-green-300/80">
+                            <span className="flex-1">{text}</span>
+                            {count > 1 && (
+                              <span className="shrink-0 rounded-full bg-green-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-green-700 dark:text-green-400">
+                                {count}명
+                              </span>
+                            )}
                           </li>
                         ))}
                       </ul>
@@ -336,10 +340,15 @@ export default async function PlaceDetail({ params }: PageProps) {
                         <ThumbsDown className="h-3.5 w-3.5" />
                         단점
                       </p>
-                      <ul className="space-y-1">
-                        {topCons.map((con) => (
-                          <li key={con} className="text-sm text-red-800/80 dark:text-red-300/80">
-                            {con}
+                      <ul className="space-y-1.5">
+                        {topCons.map(([text, count]) => (
+                          <li key={text} className="flex items-start gap-1.5 text-sm text-red-800/80 dark:text-red-300/80">
+                            <span className="flex-1">{text}</span>
+                            {count > 1 && (
+                              <span className="shrink-0 rounded-full bg-red-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-red-700 dark:text-red-400">
+                                {count}명
+                              </span>
+                            )}
                           </li>
                         ))}
                       </ul>
@@ -391,6 +400,28 @@ export default async function PlaceDetail({ params }: PageProps) {
                     <p className="mb-3 text-sm leading-relaxed text-foreground/80">
                       {review.content_summary}
                     </p>
+                  )}
+
+                  {/* 개별 리뷰 장단점 */}
+                  {(review.pros.length > 0 || review.cons.length > 0) && (
+                    <div className="mb-3 flex flex-wrap gap-1.5">
+                      {review.pros.map((pro) => (
+                        <span
+                          key={pro}
+                          className="rounded-full bg-green-500/10 px-2 py-0.5 text-[11px] text-green-700 dark:text-green-400"
+                        >
+                          + {pro}
+                        </span>
+                      ))}
+                      {review.cons.map((con) => (
+                        <span
+                          key={con}
+                          className="rounded-full bg-red-500/10 px-2 py-0.5 text-[11px] text-red-700 dark:text-red-400"
+                        >
+                          - {con}
+                        </span>
+                      ))}
+                    </div>
                   )}
 
                   <a
