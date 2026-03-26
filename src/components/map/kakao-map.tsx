@@ -10,9 +10,9 @@ interface KakaoMapProps {
   onPlaceSelect: (place: Place) => void;
 }
 
-// 마포구 홍대입구역 중심
-const MAPO_CENTER = { lat: 37.5500, lng: 126.9230 };
-const DEFAULT_LEVEL = 6;
+// 홍대입구역 (2번 출구 기준)
+const MAPO_CENTER = { lat: 37.5571, lng: 126.9236 };
+const DEFAULT_LEVEL = 5;
 
 export default function KakaoMap({
   places,
