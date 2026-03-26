@@ -10,8 +10,8 @@ interface KakaoMapProps {
   onPlaceSelect: (place: Place) => void;
 }
 
-// 홍대입구역 (2번 출구 기준)
-const MAPO_CENTER = { lat: 37.5571, lng: 126.9236 };
+// 홍대입구역 2호선 (카카오맵 API 기준)
+const MAPO_CENTER = { lat: 37.5569, lng: 126.9238 };
 const DEFAULT_LEVEL = 5;
 
 export default function KakaoMap({
