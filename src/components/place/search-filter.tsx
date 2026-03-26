@@ -88,6 +88,7 @@ export default function SearchFilter({ onFilterChange }: SearchFilterProps) {
       <div className="flex items-center gap-3 overflow-x-auto pb-0.5 scrollbar-none">
         {/* 대화 가능 여부 */}
         <div className="flex shrink-0 items-center gap-1.5">
+          <span className="shrink-0 text-[11px] font-medium text-muted-foreground">소음</span>
           {CONVERSATION_OPTIONS.map((opt) => (
             <button
               key={String(opt.value)}
@@ -107,6 +108,7 @@ export default function SearchFilter({ onFilterChange }: SearchFilterProps) {
 
         {/* 가격대 */}
         <div className="flex shrink-0 items-center gap-1.5">
+          <span className="shrink-0 text-[11px] font-medium text-muted-foreground">가격</span>
           {PRICE_OPTIONS.map((opt) => (
             <button
               key={opt.value}
@@ -126,6 +128,7 @@ export default function SearchFilter({ onFilterChange }: SearchFilterProps) {
 
         {/* 분위기 */}
         <div className="flex shrink-0 items-center gap-1.5">
+          <span className="shrink-0 text-[11px] font-medium text-muted-foreground">분위기</span>
           {ATMOSPHERE_OPTIONS.map((atm) => (
             <button
               key={atm}
