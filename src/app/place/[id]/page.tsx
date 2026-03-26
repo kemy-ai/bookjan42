@@ -73,8 +73,8 @@ export default async function PlaceDetail({ params }: PageProps) {
             <span
               className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium ${
                 place.conversation
-                  ? "bg-blue-500/10 text-blue-600 dark:bg-blue-400/10 dark:text-blue-400"
-                  : "bg-orange-500/10 text-orange-600 dark:bg-orange-400/10 dark:text-orange-400"
+                  ? "bg-blue-500/10 text-blue-700 dark:bg-blue-400/10 dark:text-blue-400"
+                  : "bg-orange-500/10 text-orange-700 dark:bg-orange-400/10 dark:text-orange-400"
               }`}
             >
               {place.conversation ? (

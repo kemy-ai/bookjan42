@@ -19,17 +19,6 @@ export const metadata: Metadata = {
   description: "전국 북바를 지도에서 찾고, 솔직한 후기를 나누는 커뮤니티",
 };
 
-const themeScript = `
-  (function() {
-    var t = localStorage.getItem('theme');
-    if (t === 'light') {
-      document.documentElement.classList.remove('dark');
-    } else {
-      document.documentElement.classList.add('dark');
-    }
-  })();
-`;
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -37,9 +26,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className="dark" suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

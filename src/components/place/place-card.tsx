@@ -30,8 +30,8 @@ export default function PlaceCard({ place, isSelected }: PlaceCardProps) {
           <span
             className={`flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium ${
               place.conversation
-                ? "bg-blue-500/10 text-blue-500 dark:bg-blue-400/10 dark:text-blue-400"
-                : "bg-orange-500/10 text-orange-600 dark:bg-orange-400/10 dark:text-orange-400"
+                ? "bg-blue-500/10 text-blue-700 dark:bg-blue-400/10 dark:text-blue-400"
+                : "bg-orange-500/10 text-orange-700 dark:bg-orange-400/10 dark:text-orange-400"
             }`}
           >
             {place.conversation ? (
