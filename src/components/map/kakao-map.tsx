@@ -139,6 +139,10 @@ export default function KakaoMap({
 
     markersRef.current = markers;
     clusterer.addMarkers(markers);
+
+    // 클러스터러가 중심을 옮길 수 있으므로 홍대입구역으로 재설정
+    map.setCenter(new kakao.maps.LatLng(MAPO_CENTER.lat, MAPO_CENTER.lng));
+    map.setLevel(DEFAULT_LEVEL);
   }, [places, mapReady, onPlaceSelect]);
 
   if (error) {
