@@ -14,8 +14,13 @@ import {
   Wine,
   BookOpen,
   Navigation,
+  ThumbsUp,
+  ThumbsDown,
+  Sparkles,
+  ShieldCheck,
+  ShieldAlert,
 } from "lucide-react";
-import type { Place, MenuItem } from "@/types";
+import type { Place, MenuItem, BlogReview } from "@/types";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -35,6 +40,16 @@ export default async function PlaceDetail({ params }: PageProps) {
   }
 
   const place = data as Place;
+
+  // 블로그 리뷰 (진심 리뷰만, 신뢰도순)
+  const { data: reviewsData } = await supabase
+    .from("blog_reviews")
+    .select("*")
+    .eq("place_id", id)
+    .eq("is_ad", false)
+    .order("trust_score", { ascending: false });
+
+  const reviews = (reviewsData || []) as BlogReview[];
 
   const priceLabel =
     place.price_range === "저"
@@ -273,6 +288,127 @@ export default async function PlaceDetail({ params }: PageProps) {
                 </a>
               )}
             </div>
+          </div>
+        )}
+        {/* AI 블로그 리뷰 */}
+        {reviews.length > 0 && (
+          <div className="mb-8">
+            <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+              <Sparkles className="h-4 w-4 text-primary/60" />
+              블로그 리뷰 ({reviews.length})
+            </h2>
+
+            {/* 장단점 요약 */}
+            {(() => {
+              const allPros = reviews.flatMap((r) => r.pros).filter(Boolean);
+              const allCons = reviews.flatMap((r) => r.cons).filter(Boolean);
+              // 빈도순 정렬 (중복 제거하면서 많이 나온 순)
+              const countMap = (arr: string[]) => {
+                const map = new Map<string, number>();
+                arr.forEach((s) => map.set(s, (map.get(s) || 0) + 1));
+                return [...map.entries()].sort((a, b) => b[1] - a[1]).map(([s]) => s);
+              };
+              const topPros = countMap(allPros).slice(0, 5);
+              const topCons = countMap(allCons).slice(0, 5);
+
+              if (topPros.length === 0 && topCons.length === 0) return null;
+
+              return (
+                <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {topPros.length > 0 && (
+                    <div className="rounded-xl border border-green-500/20 bg-green-500/5 p-4">
+                      <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-green-700 dark:text-green-400">
+                        <ThumbsUp className="h-3.5 w-3.5" />
+                        장점
+                      </p>
+                      <ul className="space-y-1">
+                        {topPros.map((pro) => (
+                          <li key={pro} className="text-sm text-green-800/80 dark:text-green-300/80">
+                            {pro}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {topCons.length > 0 && (
+                    <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-4">
+                      <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-red-700 dark:text-red-400">
+                        <ThumbsDown className="h-3.5 w-3.5" />
+                        단점
+                      </p>
+                      <ul className="space-y-1">
+                        {topCons.map((con) => (
+                          <li key={con} className="text-sm text-red-800/80 dark:text-red-300/80">
+                            {con}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+
+            {/* 개별 리뷰 카드 */}
+            <div className="space-y-3">
+              {reviews.map((review) => (
+                <div
+                  key={review.id}
+                  className="rounded-xl border border-border bg-card p-4 shadow-sm"
+                >
+                  <div className="mb-2 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      {review.author_name && (
+                        <span className="text-sm font-medium text-card-foreground">
+                          {review.author_name}
+                        </span>
+                      )}
+                      {review.published_at && (
+                        <span className="text-xs text-muted-foreground">
+                          {review.published_at}
+                        </span>
+                      )}
+                    </div>
+                    <span
+                      className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium ${
+                        review.trust_score >= 0.8
+                          ? "bg-green-500/10 text-green-700 dark:text-green-400"
+                          : review.trust_score >= 0.6
+                          ? "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400"
+                          : "bg-red-500/10 text-red-700 dark:text-red-400"
+                      }`}
+                    >
+                      {review.trust_score >= 0.8 ? (
+                        <ShieldCheck className="h-3 w-3" />
+                      ) : (
+                        <ShieldAlert className="h-3 w-3" />
+                      )}
+                      신뢰도 {Math.round(review.trust_score * 100)}%
+                    </span>
+                  </div>
+
+                  {review.content_summary && (
+                    <p className="mb-3 text-sm leading-relaxed text-foreground/80">
+                      {review.content_summary}
+                    </p>
+                  )}
+
+                  <a
+                    href={review.source_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs font-medium text-primary/70 hover:text-primary transition-colors"
+                  >
+                    <ExternalLink className="h-3 w-3" />
+                    원문 보기
+                  </a>
+                </div>
+              ))}
+            </div>
+
+            <p className="mt-3 text-[11px] text-muted-foreground/60">
+              AI가 블로그 리뷰를 분석했습니다. 광고성 리뷰는 자동으로 제외됩니다.
+            </p>
           </div>
         )}
       </main>

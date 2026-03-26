@@ -25,6 +25,20 @@ export interface MenuItem {
   price: number;
 }
 
+export interface BlogReview {
+  id: string;
+  place_id: string;
+  source_url: string;
+  author_name: string | null;
+  content_summary: string | null;
+  trust_score: number;
+  is_ad: boolean;
+  pros: string[];
+  cons: string[];
+  published_at: string | null;
+  crawled_at: string;
+}
+
 export interface PlaceFilter {
   keyword?: string;
   conversation?: boolean | null;
