@@ -322,7 +322,7 @@ export default async function PlaceDetail({ params }: PageProps) {
                       </p>
                       <ul className="space-y-1.5">
                         {topPros.map(([text, count]) => (
-                          <li key={text} className="flex items-start gap-1.5 text-sm text-green-800/80 dark:text-green-300/80">
+                          <li key={text} className="flex items-start gap-1.5 text-sm text-green-900 dark:text-green-300/80">
                             <span className="flex-1">{text}</span>
                             {count > 1 && (
                               <span className="shrink-0 rounded-full bg-green-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-green-700 dark:text-green-400">
@@ -342,7 +342,7 @@ export default async function PlaceDetail({ params }: PageProps) {
                       </p>
                       <ul className="space-y-1.5">
                         {topCons.map(([text, count]) => (
-                          <li key={text} className="flex items-start gap-1.5 text-sm text-red-800/80 dark:text-red-300/80">
+                          <li key={text} className="flex items-start gap-1.5 text-sm text-red-900 dark:text-red-300/80">
                             <span className="flex-1">{text}</span>
                             {count > 1 && (
                               <span className="shrink-0 rounded-full bg-red-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-red-700 dark:text-red-400">
@@ -381,10 +381,10 @@ export default async function PlaceDetail({ params }: PageProps) {
                     <span
                       className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium ${
                         review.trust_score >= 0.8
-                          ? "bg-green-500/10 text-green-700 dark:text-green-400"
+                          ? "bg-green-500/10 text-green-800 dark:text-green-400"
                           : review.trust_score >= 0.6
-                          ? "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400"
-                          : "bg-red-500/10 text-red-700 dark:text-red-400"
+                          ? "bg-yellow-500/10 text-yellow-800 dark:text-yellow-400"
+                          : "bg-red-500/10 text-red-800 dark:text-red-400"
                       }`}
                     >
                       {review.trust_score >= 0.8 ? (
@@ -408,7 +408,7 @@ export default async function PlaceDetail({ params }: PageProps) {
                       {review.pros.map((pro) => (
                         <span
                           key={pro}
-                          className="rounded-full bg-green-500/10 px-2 py-0.5 text-[11px] text-green-700 dark:text-green-400"
+                          className="rounded-full bg-green-500/10 px-2 py-0.5 text-[11px] text-green-800 dark:text-green-400"
                         >
                           + {pro}
                         </span>
@@ -416,7 +416,7 @@ export default async function PlaceDetail({ params }: PageProps) {
                       {review.cons.map((con) => (
                         <span
                           key={con}
-                          className="rounded-full bg-red-500/10 px-2 py-0.5 text-[11px] text-red-700 dark:text-red-400"
+                          className="rounded-full bg-red-500/10 px-2 py-0.5 text-[11px] text-red-800 dark:text-red-400"
                         >
                           - {con}
                         </span>
