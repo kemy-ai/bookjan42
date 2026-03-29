@@ -1,130 +1,100 @@
 # 작업 인계 문서
 
 > 생성일: 2026-03-24
-> 갱신일: 2026-03-25 (2차)
+> 갱신일: 2026-03-29 (7차)
 > 프로젝트: 책잔사이 (bookjan42)
-> 폴더: ~/01_AI/bookjan42/
 
 ## 완료된 작업
-- [x] 프로젝트 비전 정립 + PRD 4종 문서
-- [x] Next.js 16 + Tailwind CSS v4 + TypeScript 프로젝트 초기화
-- [x] Git init + GitHub 레포 생성 (https://github.com/kemy-ai/bookjan42)
-- [x] Supabase 프로젝트 생성 (bookjan42, ID: xbbooowddziltpphousx, 리전: ap-northeast-2)
-- [x] places 테이블 생성 (RLS 활성, 읽기 공개)
-- [x] 초기 데이터 시딩 14곳 → 보강 + 신규 4곳 = **총 18곳**
-- [x] 환경변수 설정 (.env.local + Vercel 3환경)
-- [x] Supabase 클라이언트 (서버/브라우저)
-- [x] 카카오맵 컴포넌트 (마커, 클러스터링, 인포윈도우)
-- [x] 검색/필터 (키워드, 대화 가능, 가격대, 분위기)
-- [x] 장소 카드 목록 + 상세페이지
-- [x] 공통 헤더 (layout.tsx, 클릭 시 홈으로)
-- [x] 모바일 반응형 (지도/목록 토글)
-- [x] 다크모드 기본
-- [x] Vercel 프로덕션 배포 (https://bookjan42.vercel.app)
-- [x] DB 스키마 확장 (closed_days, instagram_url, naver_place_url 필드 추가)
-- [x] 사업자 정보 푸터 추가 (카카오맵 심사 반려 대응)
-- [x] **카카오맵 테스트앱으로 지도 활성화** — 앱 ID 1414364 (bookjan42-TEST)
-- [x] JavaScript SDK 도메인 등록 (bookjan42.vercel.app)
-- [x] 환경변수 변경: NEXT_PUBLIC_KAKAO_MAP_KEY → 362f1ee53444ae82e60f70d9305ed7af (테스트앱 키)
-- [x] 마커 클릭 시 지도 이동 버그 수정 (selectedPlaceId useEffect 제거)
-- [x] 인포윈도우 정보 보강 (짧은 특징, 운영시간, 휴무일, 상세보기 링크)
-- [x] 초기 줌 레벨 개선 (서울 지역 기준 setBounds)
-- [x] 마커 색상 구분 (대화가능: 파란색 #4a90d9, 정숙: 주황색 #e67e22, SVG 커스텀 마커)
-- [x] **UI 대규모 디자인 리뉴얼** (ui-ux-pro-max 기반)
-  - 따뜻한 앰버/브라운 컬러 시스템 (Book & Reading Tracker 팔레트)
-  - 다크/라이트 모드 토글 (헤더 Sun/Moon 버튼, localStorage 저장)
-  - 깜빡임 방지 스크립트 (head에 theme 초기화)
-  - 헤더: sticky + backdrop-blur, 로고 아이콘 개선
-  - 카드: rounded-2xl, 호버 효과, 운영시간/상세보기 표시
-  - 필터: rounded-full 태그, 부드러운 트랜지션
-  - 디자인 시스템: design-system/bookjan42/MASTER.md 생성
 
-## 블로커: 카카오맵 심사 (본 앱)
-- **원본 앱(1413974) 심사 반려** — 반려 사유:
-  1. 서비스 화면 스크린샷 미첨부
-  2. 사이트에 사업자 정보 미표시 → **푸터로 해결 완료**
-- **테스트앱(1414364)으로 우회 운영 중** — 심사 없이 카카오맵 사용 가능
-- 추후 본 앱 심사 재신청 시: 사이트 스크린샷 3~4장 첨부 필요
+### Phase 1 (2026-03-24~25)
+- [x] 프로젝트 초기 설정 (Next.js 16, Tailwind v4, Supabase, Kakao Maps)
+- [x] 25곳 장소 데이터 등록 + 데이터 보강
+- [x] 메인 페이지 (지도 + 목록 + 검색/필터)
+- [x] 장소 상세 페이지 (기본 정보, 분위기, 메뉴, 외부 링크)
+- [x] 다크/라이트 모드 토글
+- [x] Vercel 배포 (https://bookjan42.vercel.app)
 
-## 결정된 사항
-- **기술 스택**: Next.js 16 + Supabase + Vercel + 카카오맵 + Tailwind v4
-- **카카오 앱**: 테스트앱 bookjan42-TEST (ID: 1414364), JS키: 362f1ee53444ae82e60f70d9305ed7af
-- **카카오 원본 앱**: bookjan42 (ID: 1413974), JS키: 5f0456d909ec48bcbb94fdd047224d25 (심사 대기)
-- **디자인**: ui-ux-pro-max 스킬 필수 사용 (메모리에 저장됨)
-- **컬러**: 앰버/브라운 톤 (다크: #0C0A09 배경, 라이트: #FFFBF5 배경, 액센트: #D97706)
-- **배포 URL**: https://bookjan42.vercel.app
-- **GitHub**: https://github.com/kemy-ai/bookjan42
-- **데이터 관리**: 캐미 수동 관리 (Place 데이터 임의 수정 금지)
+### Phase 2 — AI 리뷰 (2026-03-26~29)
+- [x] 라이트 모드 대비 수정 (border, 배지 색상 AA 충족, layout script 에러)
+- [x] 필터 항상 노출 UI (토글 제거 → 칩 가로 스크롤 + 그룹 라벨)
+- [x] blog_reviews 테이블 생성 (Supabase)
+- [x] 크롤링 v1 실행 → 105건 저장 → 오염 데이터 → 전부 삭제
+- [x] 상세페이지 AI 리뷰 섹션 (장단점 요약+횟수, 개별 카드+칩, 신뢰도 배지)
+- [x] 지도 중심 홍대입구역 (카카오 API 좌표 + 클러스터러 후 재설정)
+- [x] 크롤링 v2 설계 + 구현 (콘텐츠 검증, 토큰 관리, 자동 재시작)
+- [x] 크롤링 v2 완료 — 163건 저장, 153건 무관 제거, 123.8분 소요
+- [x] 라이트 모드 리뷰 텍스트 색상 강화 (950/900)
+- [x] 주책다방 데이터 보강 (영업시간, 메뉴, 설명)
+- [x] 문학살롱 이연 삭제 (검색 결과 없음, 24곳으로 변경)
+- [x] 데이터 품질 검증 (4곳 샘플, 품질 양호 확인)
+- [x] 재크롤링 (리뷰 0건 9곳) — 96건 추가 저장, 총 259건
+- [x] blog_reviews RLS UPDATE 정책 추가
+- [x] 리뷰 0건/적은 곳 안내 메시지 UI 추가
+
+## 진행 중인 작업
+
+없음
 
 ## 다음에 해야 할 작업
-1. **데이터 품질 보강** (이번 세션에서 중단됨)
-   - 음주가의 책방: 주소 `관악구 관악로12길 3-14 지하1층`, 전화 `010-5804-3092` 확인됨 → DB 업데이트 필요
-   - 북스피리언스: 인스타 `@booksperience` 확인됨 → DB 업데이트 필요
-   - 적온 뮤직바&책바: 매일 18:00~02:00, 일 휴무 정보 확인됨 → DB 업데이트 필요
-   - 책잔 Book n Glass: 정보 거의 없음 — 직접 방문 or 인스타 DM 필요
-   - Perplexity API 할당량 초과 → WebSearch로 전환 필요
-2. **UI 추가 개선**
-   - 지도 초기 줌이 여전히 넓음 — setBounds가 서울 외 지역 포함 문제 재확인
-   - 상세페이지 디자인 리뉴얼 (ui-ux-pro-max 적용 필요)
-   - 라이트 모드 테스트 및 미세 조정
-3. **카카오맵 본 앱 심사 재신청** (선택)
-   - 사이트 스크린샷 첨부 + 사업자 정보 확인
-4. **Phase 2 시작** (PRD/03_PHASES.md 참조)
-   - 네이버 블로그 크롤링 파이프라인 (Scrapling + python3.12)
-   - AI 광고/진심 분류
-   - 장소 상세페이지에 AI 리뷰 섹션 추가
+
+### 우선순위 높음
+1. **Vercel 재배포** — 리뷰 UI 변경사항 반영
+2. **Phase 2 UI 최종 점검** — 재크롤링 데이터 반영된 상세페이지 확인
+
+### Phase 3 (다음 단계)
+3. **사용자 인증** — Supabase Auth (소셜 로그인)
+4. **직접 리뷰 기능** — 사용자가 직접 리뷰 작성
+
+## 리뷰 현황 (2026-03-29 기준)
+
+**총 259건** (24곳 중 23곳에 분포)
+
+| 장소 | 리뷰 | | 장소 | 리뷰 |
+|------|----:|---|------|----:|
+| 셀레스트 | 20 | | 적온 뮤직바&책바 | 8 |
+| 벤의 서재 | 20 | | 초콜릿책방 | 8 |
+| 리브레리 | 19 | | 책바 바인딩 | 8 |
+| 책잔 Book n Glass | 19 | | 책방 소리소문 | 7 |
+| 문학살롱 초고 | 16 | | 진부책방 스튜디오 | 6 |
+| 엉금책방 | 16 | | 에디토리얼 카페 비플러스 | 5 |
+| 음주가의 책방 | 15 | | 퇴근길 책 한잔 | 4 |
+| 책,익다 | 15 | | 북바이북 | 2 |
+| 주책다방 | 14 | | 바람길 | 1 |
+| 마이시크릿덴 | 14 | | 책읽는고양이 | 0 |
+| 북스피리언스 | 13 | | | |
+| 공상온도 | 12 | | | |
+| 책바 Chaeg Bar | 12 | | | |
+| 북술북술 | 10 | | | |
 
 ## 주의사항
-- `.env.local`은 .gitignore에 포함 — Git에 커밋 안 됨
-- Supabase anon 키는 NEXT_PUBLIC이라 클라이언트 노출 OK (RLS로 보호)
-- Book_api의 .env 파일이 git에 커밋되어 있음 → API 키 노출 상태 (나중에 키 교체 필요)
-- Supabase 무료 플랜: 1주 미사용 시 자동 일시정지 → 주기적 접속
-- 이전 Supabase 프로젝트 "kemy's Project"는 INACTIVE 상태 (삭제해도 됨)
-- **카카오맵 환경변수 주의**: 현재 테스트앱 키(`362f...`) 사용 중. 본 앱 심사 완료 시 원본 키(`5f04...`)로 교체 필요
-- **ui-ux-pro-max 스킬**: 이 프로젝트 UI/UX 작업 시 반드시 사용 (메모리 feedback_uiux_skill.md)
 
-## 프로젝트 구조
-```
-bookjan42/
-├── PRD/                    # 디자인 문서 4종
-├── design-system/
-│   └── bookjan42/MASTER.md # ui-ux-pro-max 생성 디자인 시스템
-├── src/
-│   ├── app/
-│   │   ├── layout.tsx      # 루트 레이아웃 (헤더+푸터, 테마 스크립트)
-│   │   ├── page.tsx        # 홈 (서버 컴포넌트 → Supabase fetch)
-│   │   ├── globals.css     # Tailwind v4 + 라이트/다크 컬러 토큰
-│   │   └── place/[id]/page.tsx  # 장소 상세페이지
-│   ├── components/
-│   │   ├── header.tsx      # sticky 헤더 (로고 + 테마 토글)
-│   │   ├── footer.tsx      # 사업자 정보 푸터
-│   │   ├── theme-toggle.tsx # 다크/라이트 모드 전환 버튼
-│   │   ├── home-client.tsx  # 홈 클라이언트 (검색+지도+목록)
-│   │   ├── map/kakao-map.tsx    # 카카오맵 (커스텀 SVG 마커, 클러스터링)
-│   │   └── place/
-│   │       ├── place-card.tsx   # 장소 카드 (리뉴얼됨)
-│   │       ├── place-list.tsx   # 장소 목록
-│   │       └── search-filter.tsx # 검색/필터 (리뉴얼됨)
-│   ├── lib/
-│   │   ├── supabase/       # 서버/클라이언트 Supabase 클라이언트
-│   │   ├── kakao-map/      # SDK 로드 + 타입 선언 (MarkerImage 등 추가)
-│   │   └── utils.ts        # cn() 유틸리티
-│   └── types/index.ts      # Place, MenuItem, PlaceFilter 타입
-├── .env.local              # 환경변수 (Supabase + 카카오맵 테스트앱 키)
-├── .vercel/                # Vercel 프로젝트 연결
-└── package.json
-```
+### 알려진 이슈
+- **카카오맵 심사 대기 중** — 심사 완료 전까지 지도 미표시 (앱 ID: 1413974)
+- **책읽는고양이** — 블로그 리뷰 자체가 없음, 0건 상태 유지
+- **MarkerClusterer**: `addMarkers()` 후 반드시 `setCenter()` + `setLevel()` 재설정
+- **Next.js 16**: `<head>` 안에 script 태그 불가. ThemeToggle useEffect로 대체
+- **Perplexity API**: 할당량 초과 (2026-03-25~), WebSearch 도구 사용
 
-## 인프라 ID
-- Supabase 프로젝트: `xbbooowddziltpphousx` (리전: ap-northeast-2 서울)
-- Supabase 조직: `zjpwmlevyrpvpwixnrdh` (이름: kemy)
-- Vercel 프로젝트: `kemys-projects-16c5001d/bookjan42`
-- 카카오 원본 앱 ID: 1413974
-- 카카오 테스트앱 ID: 1414364
-- 카카오 테스트앱 JS키: 362f1ee53444ae82e60f70d9305ed7af
+### 크롤링 참고
+- `scripts/recrawl_missing.py` — 리뷰 0건 재크롤링 전용 (커스텀 검색어)
+- `scripts/crawl_blog_reviews_v2.py` — v2 메인 크롤링
+- v2 검색어: 네이버 블로그 API + AI 검증(claude -p haiku)
+- blog_reviews RLS: read(all) + insert(anon) + update(anon)
 
-## 관련 파일
-- ~/01_AI/bookjan42/PRD/ — 전체 디자인 문서 (4종)
-- ~/01_AI/Book_api/ — 기존 책 API 프로젝트 (Phase 3에서 재활용)
-- ~/.claude/projects/-Users-kemmyjeon/memory/project_bookjan42.md — 프로젝트 메모리
-- ~/.claude/projects/-Users-kemmyjeon/memory/feedback_uiux_skill.md — UI/UX 스킬 필수 사용 메모리
+## 주요 파일
+
+### 수정된 파일 (Phase 2)
+| 파일 | 변경 내용 |
+|------|----------|
+| `src/app/place/[id]/page.tsx` | AI 리뷰 섹션 + 리뷰 없음/적음 안내 메시지 |
+| `src/components/place/search-filter.tsx` | 필터 항상 노출 + 그룹 라벨 |
+| `scripts/recrawl_missing.py` | 리뷰 0건 재크롤링 (커스텀 검색어) |
+
+### DB
+- `blog_reviews` 테이블: 259건
+- `places` 테이블: 24곳
+
+## 마지막 상태
+- 브랜치: main
+- 배포: https://bookjan42.vercel.app (재배포 필요)
+- 빌드: ✅ 통과

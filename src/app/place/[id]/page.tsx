@@ -291,12 +291,27 @@ export default async function PlaceDetail({ params }: PageProps) {
           </div>
         )}
         {/* AI 블로그 리뷰 */}
-        {reviews.length > 0 && (
+        {reviews.length === 0 ? (
+          <div className="mb-8">
+            <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+              <Sparkles className="h-4 w-4 text-primary/60" />
+              블로그 리뷰
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              아직 블로그 리뷰가 없습니다. 직접 방문 후 리뷰를 남겨주세요!
+            </p>
+          </div>
+        ) : (
           <div className="mb-8">
             <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
               <Sparkles className="h-4 w-4 text-primary/60" />
               블로그 리뷰 ({reviews.length})
             </h2>
+            {reviews.length <= 3 && (
+              <p className="mb-4 text-sm text-muted-foreground">
+                아직 리뷰가 많지 않습니다. 더 많은 리뷰가 모이면 정확한 분석이 가능해요.
+              </p>
+            )}
 
             {/* 장단점 요약 (언급 횟수 표시) */}
             {(() => {
