@@ -514,11 +514,14 @@ export default async function PlaceDetail({ params }: PageProps) {
                 >
                   <div className="mb-2 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      {review.author_name && (
-                        <span className="text-sm font-medium text-card-foreground">
-                          {review.author_name}
-                        </span>
-                      )}
+                      <a
+                        href={review.source_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm font-medium text-card-foreground hover:text-primary transition-colors"
+                      >
+                        {review.author_name || "블로그 리뷰"}
+                      </a>
                       {review.published_at && (
                         <span className="text-xs text-muted-foreground">
                           {review.published_at}
@@ -571,15 +574,6 @@ export default async function PlaceDetail({ params }: PageProps) {
                     </div>
                   )}
 
-                  <a
-                    href={review.source_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs font-medium text-primary/70 hover:text-primary transition-colors"
-                  >
-                    <ExternalLink className="h-3 w-3" />
-                    원문 보기
-                  </a>
                 </div>
               ))}
             </div>
