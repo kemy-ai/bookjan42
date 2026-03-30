@@ -350,56 +350,42 @@ export default async function PlaceDetail({ params }: PageProps) {
                   </div>
                 )}
 
-                {/* 공통 장단점 — 텍스트는 검은색, 섹션 배경만 연한 색 */}
+                {/* 공통 장단점 — 개별 리뷰 칩과 동일한 스타일 */}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {insight.common_pros.length > 0 && (
-                    <div className="rounded-xl border border-emerald-200 bg-white p-4 dark:border-emerald-500/20 dark:bg-emerald-950/30">
-                      <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                    <div className="rounded-xl border border-border bg-card p-4">
+                      <p className="mb-3 flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
                         <ThumbsUp className="h-3.5 w-3.5" />
                         공통 장점
                       </p>
-                      <ul className="space-y-1.5">
+                      <div className="flex flex-wrap gap-1.5">
                         {insight.common_pros.map((item) => (
-                          <li key={item.text} className="flex items-start gap-1.5 text-sm text-foreground">
-                            <span className="flex-1">{item.text}</span>
-                            <span className="shrink-0 flex items-center gap-1">
-                              {item.label === "핵심" && (
-                                <span className="rounded-full bg-emerald-200 px-1.5 py-0.5 text-[10px] font-bold text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-400">
-                                  핵심
-                                </span>
-                              )}
-                              <span className="rounded-full bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400">
-                                {item.count}명
-                              </span>
-                            </span>
-                          </li>
+                          <span key={item.text} className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] text-foreground/80 dark:bg-emerald-500/10">
+                            + {item.text}
+                            {item.count > 1 && (
+                              <span className="ml-1 text-[10px] text-muted-foreground">({item.count}명)</span>
+                            )}
+                          </span>
                         ))}
-                      </ul>
+                      </div>
                     </div>
                   )}
                   {insight.common_cons.length > 0 && (
-                    <div className="rounded-xl border border-amber-200 bg-white p-4 dark:border-amber-500/20 dark:bg-amber-950/30">
-                      <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-amber-700 dark:text-amber-400">
+                    <div className="rounded-xl border border-border bg-card p-4">
+                      <p className="mb-3 flex items-center gap-1.5 text-xs font-semibold text-amber-700 dark:text-amber-400">
                         <ThumbsDown className="h-3.5 w-3.5" />
                         아쉬운 점
                       </p>
-                      <ul className="space-y-1.5">
+                      <div className="flex flex-wrap gap-1.5">
                         {insight.common_cons.map((item) => (
-                          <li key={item.text} className="flex items-start gap-1.5 text-sm text-foreground">
-                            <span className="flex-1">{item.text}</span>
-                            <span className="shrink-0 flex items-center gap-1">
-                              {item.label === "핵심" && (
-                                <span className="rounded-full bg-amber-200 px-1.5 py-0.5 text-[10px] font-bold text-amber-800 dark:bg-amber-500/20 dark:text-amber-400">
-                                  핵심
-                                </span>
-                              )}
-                              <span className="rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700 dark:bg-amber-500/15 dark:text-amber-400">
-                                {item.count}명
-                              </span>
-                            </span>
-                          </li>
+                          <span key={item.text} className="rounded-full bg-amber-50 px-2.5 py-1 text-[11px] text-foreground/80 dark:bg-amber-500/10">
+                            - {item.text}
+                            {item.count > 1 && (
+                              <span className="ml-1 text-[10px] text-muted-foreground">({item.count}명)</span>
+                            )}
+                          </span>
                         ))}
-                      </ul>
+                      </div>
                     </div>
                   )}
                 </div>
