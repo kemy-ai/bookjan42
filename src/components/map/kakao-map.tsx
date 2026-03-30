@@ -135,7 +135,7 @@ export default function KakaoMap({
         </div>
       `;
 
-      // 마커 옆 이름 라벨 (항상 표시)
+      // 마커 위 이름 라벨 (확대 시 숨김 — 인포윈도우와 중복 방지)
       const label = new kakao.maps.CustomOverlay({
         position,
         content: `<div style="
@@ -144,15 +144,17 @@ export default function KakaoMap({
           font-weight:600;
           font-family:system-ui;
           color:#fff;
-          background:rgba(0,0,0,0.7);
+          background:rgba(0,0,0,0.75);
           border-radius:4px;
           white-space:nowrap;
           pointer-events:none;
           transform:translateY(-52px);
+          z-index:10;
         ">${place.name}</div>`,
         yAnchor: 0,
       });
       label.setMap(map);
+      labelsRef.current.push(label);
 
       // 인포윈도우 (클릭 또는 확대 시 표시)
       const infoWindow = new kakao.maps.InfoWindow({
@@ -175,11 +177,13 @@ export default function KakaoMap({
     markersRef.current = markers;
     clusterer.addMarkers(markers);
 
-    // 확대 시(레벨 3 이하) 보이는 영역의 마커에 인포윈도우 자동 표시
+    // 확대 시(레벨 3 이하) 인포윈도우 자동 표시 + 이름 라벨 숨기기
     const DETAIL_LEVEL = 3;
     const handleZoom = () => {
       const level = map.getLevel();
       if (level <= DETAIL_LEVEL) {
+        // 확대: 인포윈도우 표시 + 이름 라벨 숨김 (중복 방지)
+        labelsRef.current.forEach((l) => l.setMap(null));
         const bounds = map.getBounds();
         infoWindowsRef.current.forEach(({ marker, infoWindow }) => {
           const pos = marker.getPosition();
@@ -190,9 +194,10 @@ export default function KakaoMap({
           }
         });
       } else {
-        // 축소 시 모든 인포윈도우 닫기
+        // 축소: 인포윈도우 닫기 + 이름 라벨 복원
         infoWindowsRef.current.forEach(({ infoWindow }) => infoWindow.close());
         activeInfoWindowRef.current = null;
+        labelsRef.current.forEach((l) => l.setMap(map));
       }
     };
     kakao.maps.event.addListener(map, "zoom_changed", handleZoom);
