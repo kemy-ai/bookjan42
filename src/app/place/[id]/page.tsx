@@ -353,22 +353,22 @@ export default async function PlaceDetail({ params }: PageProps) {
                 {/* 공통 장단점 */}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {insight.common_pros.length > 0 && (
-                    <div className="rounded-xl border border-green-500/20 bg-green-500/5 p-4">
-                      <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-green-900 dark:text-green-400">
+                    <div className="rounded-xl border border-emerald-600/30 bg-emerald-50 p-4 dark:border-emerald-500/20 dark:bg-emerald-500/5">
+                      <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-emerald-800 dark:text-emerald-400">
                         <ThumbsUp className="h-3.5 w-3.5" />
                         공통 장점
                       </p>
                       <ul className="space-y-1.5">
                         {insight.common_pros.map((item) => (
-                          <li key={item.text} className="flex items-start gap-1.5 text-sm text-green-950 dark:text-green-300/80">
+                          <li key={item.text} className="flex items-start gap-1.5 text-sm text-emerald-900 dark:text-emerald-300/80">
                             <span className="flex-1">{item.text}</span>
                             <span className="shrink-0 flex items-center gap-1">
                               {item.label === "핵심" && (
-                                <span className="rounded-full bg-green-500/20 px-1.5 py-0.5 text-[10px] font-bold text-green-900 dark:text-green-400">
+                                <span className="rounded-full bg-emerald-600/20 px-1.5 py-0.5 text-[10px] font-bold text-emerald-800 dark:text-emerald-400">
                                   핵심
                                 </span>
                               )}
-                              <span className="rounded-full bg-green-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-green-900 dark:text-green-400">
+                              <span className="rounded-full bg-emerald-600/15 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-800 dark:text-emerald-400">
                                 {item.count}명
                               </span>
                             </span>
@@ -462,14 +462,14 @@ export default async function PlaceDetail({ params }: PageProps) {
                 return (
                   <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                     {topPros.length > 0 && (
-                      <div className="rounded-xl border border-green-500/20 bg-green-500/5 p-4">
-                        <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-green-900 dark:text-green-400">
+                      <div className="rounded-xl border border-emerald-600/30 bg-emerald-50 p-4 dark:border-emerald-500/20 dark:bg-emerald-500/5">
+                        <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-emerald-800 dark:text-emerald-400">
                           <ThumbsUp className="h-3.5 w-3.5" />
                           장점
                         </p>
                         <ul className="space-y-1.5">
                           {topPros.map(([text, count]) => (
-                            <li key={text} className="flex items-start gap-1.5 text-sm text-green-950 dark:text-green-300/80">
+                            <li key={text} className="flex items-start gap-1.5 text-sm text-emerald-900 dark:text-emerald-300/80">
                               <span className="flex-1">{text}</span>
                               {count > 1 && (
                                 <span className="shrink-0 rounded-full bg-green-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-green-900 dark:text-green-400">
@@ -559,7 +559,7 @@ export default async function PlaceDetail({ params }: PageProps) {
                       {review.pros.map((pro) => (
                         <span
                           key={pro}
-                          className="rounded-full bg-green-500/10 px-2 py-0.5 text-[11px] text-green-950 dark:text-green-400"
+                          className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] text-emerald-800 dark:bg-emerald-500/10 dark:text-emerald-400"
                         >
                           + {pro}
                         </span>
