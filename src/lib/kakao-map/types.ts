@@ -22,6 +22,7 @@ declare global {
         setBounds(bounds: LatLngBounds): void;
         panTo(latlng: LatLng): void;
         relayout(): void;
+        getBounds(): LatLngBounds;
       }
 
       class Marker {
@@ -36,9 +37,16 @@ declare global {
         close(): void;
       }
 
+      class CustomOverlay {
+        constructor(options: CustomOverlayOptions);
+        setMap(map: Map | null): void;
+        getMap(): Map | null;
+      }
+
       class LatLngBounds {
         constructor();
         extend(latlng: LatLng): void;
+        contain(latlng: LatLng): boolean;
       }
 
       class MarkerImage {
@@ -61,6 +69,11 @@ declare global {
 
       namespace event {
         function addListener(
+          target: Marker | Map,
+          type: string,
+          handler: () => void
+        ): void;
+        function removeListener(
           target: Marker | Map,
           type: string,
           handler: () => void
@@ -89,6 +102,14 @@ declare global {
         map: Map;
         averageCenter?: boolean;
         minLevel?: number;
+      }
+
+      interface CustomOverlayOptions {
+        position: LatLng;
+        content: string | HTMLElement;
+        yAnchor?: number;
+        xAnchor?: number;
+        map?: Map;
       }
     }
   }

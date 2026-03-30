@@ -21,8 +21,10 @@ export default function KakaoMap({
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<kakao.maps.Map | null>(null);
   const markersRef = useRef<kakao.maps.Marker[]>([]);
+  const labelsRef = useRef<kakao.maps.CustomOverlay[]>([]);
+  const infoWindowsRef = useRef<{ marker: kakao.maps.Marker; infoWindow: kakao.maps.InfoWindow; place: Place }[]>([]);
   const clustererRef = useRef<kakao.maps.MarkerClusterer | null>(null);
-  const infoWindowRef = useRef<kakao.maps.InfoWindow | null>(null);
+  const activeInfoWindowRef = useRef<kakao.maps.InfoWindow | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [mapReady, setMapReady] = useState(false);
 
@@ -80,11 +82,14 @@ export default function KakaoMap({
     const clusterer = clustererRef.current;
     if (!map || !clusterer || !mapReady) return;
 
-    // 기존 마커 제거
+    // 기존 마커 + 라벨 + 인포윈도우 제거
     markersRef.current.forEach((m) => m.setMap(null));
     markersRef.current = [];
+    labelsRef.current.forEach((l) => l.setMap(null));
+    labelsRef.current = [];
+    infoWindowsRef.current = [];
     clusterer.clear();
-    if (infoWindowRef.current) infoWindowRef.current.close();
+    if (activeInfoWindowRef.current) activeInfoWindowRef.current.close();
 
     // SVG 마커 생성 함수
     const createMarkerSvg = (color: string) => {
@@ -130,24 +135,67 @@ export default function KakaoMap({
         </div>
       `;
 
+      // 마커 옆 이름 라벨 (항상 표시)
+      const label = new kakao.maps.CustomOverlay({
+        position,
+        content: `<div style="
+          padding:2px 6px;
+          font-size:11px;
+          font-weight:600;
+          font-family:system-ui;
+          color:#fff;
+          background:rgba(0,0,0,0.7);
+          border-radius:4px;
+          white-space:nowrap;
+          pointer-events:none;
+          transform:translateY(-52px);
+        ">${place.name}</div>`,
+        yAnchor: 0,
+      });
+      label.setMap(map);
+
+      // 인포윈도우 (클릭 또는 확대 시 표시)
+      const infoWindow = new kakao.maps.InfoWindow({
+        content: infoContent,
+        removable: true,
+      });
+
       kakao.maps.event.addListener(marker, "click", () => {
-        if (infoWindowRef.current) infoWindowRef.current.close();
-
-        const infoWindow = new kakao.maps.InfoWindow({
-          content: infoContent,
-          removable: true,
-        });
+        if (activeInfoWindowRef.current) activeInfoWindowRef.current.close();
         infoWindow.open(map, marker);
-        infoWindowRef.current = infoWindow;
-
+        activeInfoWindowRef.current = infoWindow;
         onPlaceSelect(place);
       });
+
+      infoWindowsRef.current.push({ marker, infoWindow, place });
 
       return marker;
     });
 
     markersRef.current = markers;
     clusterer.addMarkers(markers);
+
+    // 확대 시(레벨 3 이하) 보이는 영역의 마커에 인포윈도우 자동 표시
+    const DETAIL_LEVEL = 3;
+    const handleZoom = () => {
+      const level = map.getLevel();
+      if (level <= DETAIL_LEVEL) {
+        const bounds = map.getBounds();
+        infoWindowsRef.current.forEach(({ marker, infoWindow }) => {
+          const pos = marker.getPosition();
+          if (bounds.contain(pos)) {
+            infoWindow.open(map, marker);
+          } else {
+            infoWindow.close();
+          }
+        });
+      } else {
+        // 축소 시 모든 인포윈도우 닫기
+        infoWindowsRef.current.forEach(({ infoWindow }) => infoWindow.close());
+        activeInfoWindowRef.current = null;
+      }
+    };
+    kakao.maps.event.addListener(map, "zoom_changed", handleZoom);
 
     // 마커 추가 후 홍대입구역으로 강제 재설정
     // relayout()은 비동기로 컨테이너를 재계산하므로, 완료 후 setCenter를 호출해야 함
