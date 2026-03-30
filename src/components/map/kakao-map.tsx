@@ -135,21 +135,20 @@ export default function KakaoMap({
         </div>
       `;
 
-      // 마커 위 이름 라벨 (확대 시 숨김 — 인포윈도우와 중복 방지)
+      // 마커 아래 이름 라벨 (확대 시 숨김 — 인포윈도우와 중복 방지)
       const label = new kakao.maps.CustomOverlay({
         position,
         content: `<div style="
           padding:2px 6px;
-          font-size:11px;
+          font-size:10px;
           font-weight:600;
           font-family:system-ui;
           color:#fff;
           background:rgba(0,0,0,0.75);
-          border-radius:4px;
+          border-radius:3px;
           white-space:nowrap;
           pointer-events:none;
-          transform:translateY(-52px);
-          z-index:10;
+          transform:translateY(4px);
         ">${place.name}</div>`,
         yAnchor: 0,
       });
