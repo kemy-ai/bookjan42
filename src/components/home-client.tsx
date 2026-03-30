@@ -93,8 +93,8 @@ export default function HomeClient({ places }: HomeClientProps) {
         </div>
       </div>
 
-      {/* 메인 콘텐츠 — 높이를 남은 뷰포트에 고정, 내부만 스크롤 */}
-      <div className="flex min-h-0 flex-1 overflow-hidden">
+      {/* 메인 콘텐츠 — 높이 고정 + 너비를 헤더와 동일하게 */}
+      <div className="mx-auto flex min-h-0 w-full max-w-7xl flex-1 overflow-hidden">
         {/* 지도 — 남은 공간 차지, min-w-0으로 사이드바 공간 양보 */}
         <div
           className={`min-w-0 flex-1 overflow-hidden ${
