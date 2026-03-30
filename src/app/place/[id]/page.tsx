@@ -378,22 +378,22 @@ export default async function PlaceDetail({ params }: PageProps) {
                     </div>
                   )}
                   {insight.common_cons.length > 0 && (
-                    <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-4">
-                      <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-red-900 dark:text-red-400">
+                    <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
+                      <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-amber-800 dark:text-amber-400">
                         <ThumbsDown className="h-3.5 w-3.5" />
-                        공통 단점
+                        아쉬운 점
                       </p>
                       <ul className="space-y-1.5">
                         {insight.common_cons.map((item) => (
-                          <li key={item.text} className="flex items-start gap-1.5 text-sm text-red-950 dark:text-red-300/80">
+                          <li key={item.text} className="flex items-start gap-1.5 text-sm text-amber-950 dark:text-amber-300/80">
                             <span className="flex-1">{item.text}</span>
                             <span className="shrink-0 flex items-center gap-1">
                               {item.label === "핵심" && (
-                                <span className="rounded-full bg-red-500/20 px-1.5 py-0.5 text-[10px] font-bold text-red-900 dark:text-red-400">
+                                <span className="rounded-full bg-amber-500/20 px-1.5 py-0.5 text-[10px] font-bold text-amber-800 dark:text-amber-400">
                                   핵심
                                 </span>
                               )}
-                              <span className="rounded-full bg-red-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-red-900 dark:text-red-400">
+                              <span className="rounded-full bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800 dark:text-amber-400">
                                 {item.count}명
                               </span>
                             </span>
@@ -408,21 +408,22 @@ export default async function PlaceDetail({ params }: PageProps) {
                 {insight.personal_opinions.length > 0 && (
                   <div className="rounded-xl border border-border bg-secondary/30 p-4">
                     <p className="mb-2 text-xs font-semibold text-muted-foreground">
-                      개인 호불호 (일부 의견)
+                      개인 의견 (일부 블로거만 언급)
                     </p>
                     <div className="flex flex-wrap gap-1.5">
-                      {insight.personal_opinions.map((op) => (
+                      {insight.personal_opinions.slice(0, 8).map((op) => (
                         <span
                           key={`${op.type}-${op.text}`}
-                          className={`rounded-full px-2 py-0.5 text-[11px] ${
-                            op.type === "pro"
-                              ? "bg-green-500/10 text-green-950 dark:text-green-400"
-                              : "bg-red-500/10 text-red-950 dark:text-red-400"
-                          }`}
+                          className="rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground"
                         >
-                          {op.type === "pro" ? "+" : "-"} {op.text}
+                          {op.text}
                         </span>
                       ))}
+                      {insight.personal_opinions.length > 8 && (
+                        <span className="px-1 text-[11px] text-muted-foreground/60">
+                          +{insight.personal_opinions.length - 8}개
+                        </span>
+                      )}
                     </div>
                   </div>
                 )}
@@ -481,17 +482,17 @@ export default async function PlaceDetail({ params }: PageProps) {
                       </div>
                     )}
                     {topCons.length > 0 && (
-                      <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-4">
-                        <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-red-900 dark:text-red-400">
+                      <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
+                        <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-amber-800 dark:text-amber-400">
                           <ThumbsDown className="h-3.5 w-3.5" />
-                          단점
+                          아쉬운 점
                         </p>
                         <ul className="space-y-1.5">
                           {topCons.map(([text, count]) => (
-                            <li key={text} className="flex items-start gap-1.5 text-sm text-red-950 dark:text-red-300/80">
+                            <li key={text} className="flex items-start gap-1.5 text-sm text-amber-950 dark:text-amber-300/80">
                               <span className="flex-1">{text}</span>
                               {count > 1 && (
-                                <span className="shrink-0 rounded-full bg-red-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-red-900 dark:text-red-400">
+                                <span className="shrink-0 rounded-full bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-amber-800 dark:text-amber-400">
                                   {count}명
                                 </span>
                               )}
@@ -566,7 +567,7 @@ export default async function PlaceDetail({ params }: PageProps) {
                       {review.cons.map((con) => (
                         <span
                           key={con}
-                          className="rounded-full bg-red-500/10 px-2 py-0.5 text-[11px] text-red-950 dark:text-red-400"
+                          className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[11px] text-amber-800 dark:text-amber-400"
                         >
                           - {con}
                         </span>
