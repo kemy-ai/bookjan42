@@ -58,7 +58,16 @@ export default async function PlaceDetail({ params }: PageProps) {
     .eq("place_id", id)
     .single();
 
-  const insight = insightData as PlaceInsight | null;
+  // JSONB 필드가 문자열로 반환될 수 있으므로 파싱
+  const insight: PlaceInsight | null = insightData
+    ? {
+        ...insightData,
+        common_pros: typeof insightData.common_pros === "string" ? JSON.parse(insightData.common_pros) : (insightData.common_pros ?? []),
+        common_cons: typeof insightData.common_cons === "string" ? JSON.parse(insightData.common_cons) : (insightData.common_cons ?? []),
+        personal_opinions: typeof insightData.personal_opinions === "string" ? JSON.parse(insightData.personal_opinions) : (insightData.personal_opinions ?? []),
+        trend_changes: typeof insightData.trend_changes === "string" ? JSON.parse(insightData.trend_changes) : (insightData.trend_changes ?? []),
+      } as PlaceInsight
+    : null;
 
   const priceLabel =
     place.price_range === "저"
