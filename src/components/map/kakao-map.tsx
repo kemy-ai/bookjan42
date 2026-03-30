@@ -51,8 +51,16 @@ export default function KakaoMap({
 
       const clusterer = new kakao.maps.MarkerClusterer({
         map,
-        averageCenter: true,
         minLevel: 6,
+      });
+
+      // 타일 로드 완료 후 SDK 내부 캐시/초기화 동작을 덮어씌워 홍대입구역으로 강제 재설정
+      let centerFixed = false;
+      kakao.maps.event.addListener(map, 'tilesloaded', () => {
+        if (centerFixed) return;
+        centerFixed = true;
+        map.setCenter(new kakao.maps.LatLng(MAPO_CENTER.lat, MAPO_CENTER.lng));
+        map.setLevel(DEFAULT_LEVEL);
       });
 
       mapInstanceRef.current = map;
@@ -140,9 +148,13 @@ export default function KakaoMap({
     markersRef.current = markers;
     clusterer.addMarkers(markers);
 
-    // 클러스터러가 중심을 옮길 수 있으므로 홍대입구역으로 재설정
-    map.setCenter(new kakao.maps.LatLng(MAPO_CENTER.lat, MAPO_CENTER.lng));
-    map.setLevel(DEFAULT_LEVEL);
+    // 마커 추가 후 홍대입구역으로 강제 재설정
+    // relayout()으로 컨테이너 크기 재계산 후 center 설정 (dynamic import 로딩 후 크기 변경 대응)
+    setTimeout(() => {
+      map.relayout();
+      map.setCenter(new kakao.maps.LatLng(MAPO_CENTER.lat, MAPO_CENTER.lng));
+      map.setLevel(DEFAULT_LEVEL);
+    }, 500);
   }, [places, mapReady, onPlaceSelect]);
 
   if (error) {

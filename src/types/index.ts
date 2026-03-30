@@ -45,3 +45,32 @@ export interface PlaceFilter {
   price_range?: string | null;
   atmosphere?: string | null;
 }
+
+// 교차 분석 인사이트
+export interface InsightItem {
+  text: string;
+  count: number;
+  weighted_score: number;
+  label: "핵심" | "공통";
+}
+
+export interface PersonalOpinion {
+  text: string;
+  count: number;
+  type: "pro" | "con";
+  label: "개인" | "소수";
+}
+
+export interface PlaceInsight {
+  id: string;
+  place_id: string;
+  analysis_version: number;
+  common_pros: InsightItem[];
+  common_cons: InsightItem[];
+  personal_opinions: PersonalOpinion[];
+  trend_changes: string[];
+  overall_vibe: string | null;
+  confidence_level: number;
+  total_reviews_analyzed: number;
+  analyzed_at: string;
+}

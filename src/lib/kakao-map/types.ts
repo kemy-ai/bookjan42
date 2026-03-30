@@ -21,6 +21,7 @@ declare global {
         getCenter(): LatLng;
         setBounds(bounds: LatLngBounds): void;
         panTo(latlng: LatLng): void;
+        relayout(): void;
       }
 
       class Marker {

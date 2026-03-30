@@ -20,7 +20,7 @@ import {
   ShieldCheck,
   ShieldAlert,
 } from "lucide-react";
-import type { Place, MenuItem, BlogReview } from "@/types";
+import type { Place, MenuItem, BlogReview, PlaceInsight } from "@/types";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -41,15 +41,24 @@ export default async function PlaceDetail({ params }: PageProps) {
 
   const place = data as Place;
 
-  // 블로그 리뷰 (진심 리뷰만, 신뢰도순)
+  // 블로그 리뷰 (진심 리뷰만, 최신순 → 신뢰도순)
   const { data: reviewsData } = await supabase
     .from("blog_reviews")
     .select("*")
     .eq("place_id", id)
     .eq("is_ad", false)
-    .order("trust_score", { ascending: false });
+    .order("published_at", { ascending: false });
 
   const reviews = (reviewsData || []) as BlogReview[];
+
+  // 교차 분석 인사이트
+  const { data: insightData } = await supabase
+    .from("place_insights")
+    .select("*")
+    .eq("place_id", id)
+    .single();
+
+  const insight = insightData as PlaceInsight | null;
 
   const priceLabel =
     place.price_range === "저"
@@ -313,65 +322,179 @@ export default async function PlaceDetail({ params }: PageProps) {
               </p>
             )}
 
-            {/* 장단점 요약 (언급 횟수 표시) */}
-            {(() => {
-              const allPros = reviews.flatMap((r) => r.pros).filter(Boolean);
-              const allCons = reviews.flatMap((r) => r.cons).filter(Boolean);
-              const countMap = (arr: string[]) => {
-                const map = new Map<string, number>();
-                arr.forEach((s) => map.set(s, (map.get(s) || 0) + 1));
-                return [...map.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
-              };
-              const topPros = countMap(allPros);
-              const topCons = countMap(allCons);
+            {/* 교차 분석 인사이트 */}
+            {insight ? (
+              <div className="mb-6 space-y-3">
+                {/* 전체 분위기 요약 */}
+                {insight.overall_vibe && (
+                  <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
+                    <p className="mb-1 flex items-center gap-1.5 text-xs font-semibold text-primary">
+                      <Sparkles className="h-3.5 w-3.5" />
+                      AI 분석 요약
+                      <span className="ml-auto text-[10px] font-normal text-muted-foreground">
+                        신뢰도 {Math.round(insight.confidence_level * 100)}% · {insight.total_reviews_analyzed}건 분석
+                      </span>
+                    </p>
+                    <p className="text-sm leading-relaxed text-foreground/85">
+                      {insight.overall_vibe}
+                    </p>
+                  </div>
+                )}
 
-              if (topPros.length === 0 && topCons.length === 0) return null;
-
-              return (
-                <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  {topPros.length > 0 && (
+                {/* 공통 장단점 */}
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {insight.common_pros.length > 0 && (
                     <div className="rounded-xl border border-green-500/20 bg-green-500/5 p-4">
                       <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-green-900 dark:text-green-400">
                         <ThumbsUp className="h-3.5 w-3.5" />
-                        장점
+                        공통 장점
                       </p>
                       <ul className="space-y-1.5">
-                        {topPros.map(([text, count]) => (
-                          <li key={text} className="flex items-start gap-1.5 text-sm text-green-950 dark:text-green-300/80">
-                            <span className="flex-1">{text}</span>
-                            {count > 1 && (
-                              <span className="shrink-0 rounded-full bg-green-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-green-900 dark:text-green-400">
-                                {count}명
+                        {insight.common_pros.map((item) => (
+                          <li key={item.text} className="flex items-start gap-1.5 text-sm text-green-950 dark:text-green-300/80">
+                            <span className="flex-1">{item.text}</span>
+                            <span className="shrink-0 flex items-center gap-1">
+                              {item.label === "핵심" && (
+                                <span className="rounded-full bg-green-500/20 px-1.5 py-0.5 text-[10px] font-bold text-green-900 dark:text-green-400">
+                                  핵심
+                                </span>
+                              )}
+                              <span className="rounded-full bg-green-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-green-900 dark:text-green-400">
+                                {item.count}명
                               </span>
-                            )}
+                            </span>
                           </li>
                         ))}
                       </ul>
                     </div>
                   )}
-                  {topCons.length > 0 && (
+                  {insight.common_cons.length > 0 && (
                     <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-4">
                       <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-red-900 dark:text-red-400">
                         <ThumbsDown className="h-3.5 w-3.5" />
-                        단점
+                        공통 단점
                       </p>
                       <ul className="space-y-1.5">
-                        {topCons.map(([text, count]) => (
-                          <li key={text} className="flex items-start gap-1.5 text-sm text-red-950 dark:text-red-300/80">
-                            <span className="flex-1">{text}</span>
-                            {count > 1 && (
-                              <span className="shrink-0 rounded-full bg-red-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-red-900 dark:text-red-400">
-                                {count}명
+                        {insight.common_cons.map((item) => (
+                          <li key={item.text} className="flex items-start gap-1.5 text-sm text-red-950 dark:text-red-300/80">
+                            <span className="flex-1">{item.text}</span>
+                            <span className="shrink-0 flex items-center gap-1">
+                              {item.label === "핵심" && (
+                                <span className="rounded-full bg-red-500/20 px-1.5 py-0.5 text-[10px] font-bold text-red-900 dark:text-red-400">
+                                  핵심
+                                </span>
+                              )}
+                              <span className="rounded-full bg-red-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-red-900 dark:text-red-400">
+                                {item.count}명
                               </span>
-                            )}
+                            </span>
                           </li>
                         ))}
                       </ul>
                     </div>
                   )}
                 </div>
-              );
-            })()}
+
+                {/* 개인 호불호 (있을 때만) */}
+                {insight.personal_opinions.length > 0 && (
+                  <div className="rounded-xl border border-border bg-secondary/30 p-4">
+                    <p className="mb-2 text-xs font-semibold text-muted-foreground">
+                      개인 호불호 (일부 의견)
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {insight.personal_opinions.map((op) => (
+                        <span
+                          key={`${op.type}-${op.text}`}
+                          className={`rounded-full px-2 py-0.5 text-[11px] ${
+                            op.type === "pro"
+                              ? "bg-green-500/10 text-green-950 dark:text-green-400"
+                              : "bg-red-500/10 text-red-950 dark:text-red-400"
+                          }`}
+                        >
+                          {op.type === "pro" ? "+" : "-"} {op.text}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 트렌드 변화 (있을 때만) */}
+                {insight.trend_changes.length > 0 && (
+                  <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-3">
+                    <p className="mb-1 text-xs font-semibold text-blue-900 dark:text-blue-400">
+                      최근 변화
+                    </p>
+                    <ul className="space-y-1">
+                      {insight.trend_changes.map((change, i) => (
+                        <li key={i} className="text-xs text-blue-950 dark:text-blue-300/80">
+                          · {change}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* insight가 없으면 기존 단순 카운팅 fallback */
+              (() => {
+                const allPros = reviews.flatMap((r) => r.pros).filter(Boolean);
+                const allCons = reviews.flatMap((r) => r.cons).filter(Boolean);
+                const countMap = (arr: string[]) => {
+                  const map = new Map<string, number>();
+                  arr.forEach((s) => map.set(s, (map.get(s) || 0) + 1));
+                  return [...map.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+                };
+                const topPros = countMap(allPros);
+                const topCons = countMap(allCons);
+
+                if (topPros.length === 0 && topCons.length === 0) return null;
+
+                return (
+                  <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {topPros.length > 0 && (
+                      <div className="rounded-xl border border-green-500/20 bg-green-500/5 p-4">
+                        <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-green-900 dark:text-green-400">
+                          <ThumbsUp className="h-3.5 w-3.5" />
+                          장점
+                        </p>
+                        <ul className="space-y-1.5">
+                          {topPros.map(([text, count]) => (
+                            <li key={text} className="flex items-start gap-1.5 text-sm text-green-950 dark:text-green-300/80">
+                              <span className="flex-1">{text}</span>
+                              {count > 1 && (
+                                <span className="shrink-0 rounded-full bg-green-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-green-900 dark:text-green-400">
+                                  {count}명
+                                </span>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {topCons.length > 0 && (
+                      <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-4">
+                        <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-red-900 dark:text-red-400">
+                          <ThumbsDown className="h-3.5 w-3.5" />
+                          단점
+                        </p>
+                        <ul className="space-y-1.5">
+                          {topCons.map(([text, count]) => (
+                            <li key={text} className="flex items-start gap-1.5 text-sm text-red-950 dark:text-red-300/80">
+                              <span className="flex-1">{text}</span>
+                              {count > 1 && (
+                                <span className="shrink-0 rounded-full bg-red-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-red-900 dark:text-red-400">
+                                  {count}명
+                                </span>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()
+            )}
 
             {/* 개별 리뷰 카드 */}
             <div className="space-y-3">
