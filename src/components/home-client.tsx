@@ -95,9 +95,9 @@ export default function HomeClient({ places }: HomeClientProps) {
 
       {/* 메인 콘텐츠 — 높이를 남은 뷰포트에 고정, 내부만 스크롤 */}
       <div className="flex min-h-0 flex-1 overflow-hidden">
-        {/* 지도 — 높이 고정, 늘어나지 않음 */}
+        {/* 지도 — 남은 공간 차지, min-w-0으로 사이드바 공간 양보 */}
         <div
-          className={`flex-1 overflow-hidden ${
+          className={`min-w-0 flex-1 overflow-hidden ${
             view === "list" ? "hidden md:block" : "block"
           }`}
         >
@@ -107,10 +107,10 @@ export default function HomeClient({ places }: HomeClientProps) {
           />
         </div>
 
-        {/* 목록 사이드바 — 독립 스크롤 */}
+        {/* 목록 사이드바 — 고정 너비, 독립 스크롤 */}
         <div
-          className={`w-full overflow-y-auto border-l border-border bg-background p-4 md:w-96 ${
-            view === "map" ? "hidden md:block" : "block"
+          className={`shrink-0 overflow-y-auto border-l border-border bg-background p-4 md:w-96 ${
+            view === "map" ? "hidden md:block" : "block w-full"
           }`}
         >
           <PlaceList

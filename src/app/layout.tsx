@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "책잔사이 — 술 마시는 책방 지도",
+  title: "술방책방 — 술 마시는 책방 지도",
   description: "전국 북바를 지도에서 찾고, 솔직한 후기를 나누는 커뮤니티",
 };
 

@@ -15,7 +15,7 @@ export default function Header() {
           </div>
           <div className="flex flex-col">
             <span className="text-base font-bold leading-tight text-foreground tracking-tight">
-              책잔사이
+              술방책방
             </span>
             <span className="text-[10px] leading-tight text-muted-foreground">
               술 마시는 책방 지도
