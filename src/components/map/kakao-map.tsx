@@ -177,11 +177,11 @@ export default function KakaoMap({
     clusterer.addMarkers(markers);
 
     // 확대 시(레벨 3 이하) 인포윈도우 자동 표시 + 이름 라벨 숨기기
+    // 줌 변경 + 드래그 이동 모두에서 동작
     const DETAIL_LEVEL = 3;
-    const handleZoom = () => {
+    const updateInfoWindows = () => {
       const level = map.getLevel();
       if (level <= DETAIL_LEVEL) {
-        // 확대: 인포윈도우 표시 + 이름 라벨 숨김 (중복 방지)
         labelsRef.current.forEach((l) => l.setMap(null));
         const bounds = map.getBounds();
         infoWindowsRef.current.forEach(({ marker, infoWindow }) => {
@@ -193,13 +193,13 @@ export default function KakaoMap({
           }
         });
       } else {
-        // 축소: 인포윈도우 닫기 + 이름 라벨 복원
         infoWindowsRef.current.forEach(({ infoWindow }) => infoWindow.close());
         activeInfoWindowRef.current = null;
         labelsRef.current.forEach((l) => l.setMap(map));
       }
     };
-    kakao.maps.event.addListener(map, "zoom_changed", handleZoom);
+    kakao.maps.event.addListener(map, "zoom_changed", updateInfoWindows);
+    kakao.maps.event.addListener(map, "dragend", updateInfoWindows);
 
     // 마커 추가 후 홍대입구역으로 강제 재설정
     // relayout()은 비동기로 컨테이너를 재계산하므로, 완료 후 setCenter를 호출해야 함
