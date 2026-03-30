@@ -54,11 +54,12 @@ export default function KakaoMap({
         minLevel: 6,
       });
 
-      // 타일 로드 완료 후 SDK 내부 캐시/초기화 동작을 덮어씌워 홍대입구역으로 강제 재설정
-      let centerFixed = false;
+      // 타일 로드 완료 시 처음 2회까지 홍대입구역으로 강제 재설정
+      // (1회: 초기 로드, 2회: 마커/클러스터러 추가 후 타일 재로드)
+      let tileLoadCount = 0;
       kakao.maps.event.addListener(map, 'tilesloaded', () => {
-        if (centerFixed) return;
-        centerFixed = true;
+        if (tileLoadCount >= 2) return;
+        tileLoadCount++;
         map.setCenter(new kakao.maps.LatLng(MAPO_CENTER.lat, MAPO_CENTER.lng));
         map.setLevel(DEFAULT_LEVEL);
       });
@@ -149,12 +150,19 @@ export default function KakaoMap({
     clusterer.addMarkers(markers);
 
     // 마커 추가 후 홍대입구역으로 강제 재설정
-    // relayout()으로 컨테이너 크기 재계산 후 center 설정 (dynamic import 로딩 후 크기 변경 대응)
-    setTimeout(() => {
-      map.relayout();
+    // relayout()은 비동기로 컨테이너를 재계산하므로, 완료 후 setCenter를 호출해야 함
+    // 1단계: relayout으로 크기 재계산
+    map.relayout();
+    // 2단계: relayout 완료 후 center 설정 (requestAnimationFrame으로 렌더링 프레임 대기)
+    requestAnimationFrame(() => {
       map.setCenter(new kakao.maps.LatLng(MAPO_CENTER.lat, MAPO_CENTER.lng));
       map.setLevel(DEFAULT_LEVEL);
-    }, 500);
+      // 3단계: 안전장치 — 클러스터러 비동기 동작 완료 후 한 번 더
+      setTimeout(() => {
+        map.setCenter(new kakao.maps.LatLng(MAPO_CENTER.lat, MAPO_CENTER.lng));
+        map.setLevel(DEFAULT_LEVEL);
+      }, 300);
+    });
   }, [places, mapReady, onPlaceSelect]);
 
   if (error) {
