@@ -353,7 +353,7 @@ export default async function PlaceDetail({ params }: PageProps) {
                 {/* 공통 장단점 — 텍스트는 검은색, 섹션 배경만 연한 색 */}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {insight.common_pros.length > 0 && (
-                    <div className="rounded-xl border border-emerald-200 bg-emerald-50/80 p-4 dark:border-emerald-500/20 dark:bg-emerald-950/30">
+                    <div className="rounded-xl border border-emerald-200 bg-white p-4 dark:border-emerald-500/20 dark:bg-emerald-950/30">
                       <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
                         <ThumbsUp className="h-3.5 w-3.5" />
                         공통 장점
@@ -378,7 +378,7 @@ export default async function PlaceDetail({ params }: PageProps) {
                     </div>
                   )}
                   {insight.common_cons.length > 0 && (
-                    <div className="rounded-xl border border-amber-200 bg-amber-50/80 p-4 dark:border-amber-500/20 dark:bg-amber-950/30">
+                    <div className="rounded-xl border border-amber-200 bg-white p-4 dark:border-amber-500/20 dark:bg-amber-950/30">
                       <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-amber-700 dark:text-amber-400">
                         <ThumbsDown className="h-3.5 w-3.5" />
                         아쉬운 점
@@ -430,13 +430,13 @@ export default async function PlaceDetail({ params }: PageProps) {
 
                 {/* 트렌드 변화 (있을 때만) */}
                 {insight.trend_changes.length > 0 && (
-                  <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-3">
-                    <p className="mb-1 text-xs font-semibold text-blue-900 dark:text-blue-400">
+                  <div className="rounded-xl border border-border bg-white p-3 dark:bg-card">
+                    <p className="mb-1 text-xs font-semibold text-primary">
                       최근 변화
                     </p>
                     <ul className="space-y-1">
                       {insight.trend_changes.map((change, i) => (
-                        <li key={i} className="text-xs text-blue-950 dark:text-blue-300/80">
+                        <li key={i} className="text-xs leading-relaxed text-foreground/80">
                           · {change}
                         </li>
                       ))}
