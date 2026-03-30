@@ -56,7 +56,7 @@ export default function HomeClient({ places }: HomeClientProps) {
   }, []);
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex h-[calc(100dvh-theme(spacing.14))] flex-col overflow-hidden">
       {/* 검색 + 필터 + 모바일 토글 */}
       <div className="shrink-0 border-b border-border bg-background px-4 py-3">
         <div className="mx-auto max-w-7xl">
